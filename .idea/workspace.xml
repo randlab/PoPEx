@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b73a0717-9693-4ca7-b1db-f751fe16e2cc" name="Default" comment="" />
+    <list default="true" id="b73a0717-9693-4ca7-b1db-f751fe16e2cc" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/Makefile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/api.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/conf.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/index.rst" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/docs/make.bat" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/popex.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/popex.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
-    <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -11,118 +23,61 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="algorithm.py" pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/algorithm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="192">
-              <caret line="268" column="76" selection-start-line="268" selection-start-column="76" selection-end-line="268" selection-end-column="76" />
+            <state relative-caret-position="3780">
+              <caret line="268" selection-start-line="268" selection-end-line="268" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="popex_objects.py" pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/popex_objects.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
-              <caret line="742" column="10" lean-forward="true" selection-start-line="742" selection-start-column="10" selection-end-line="742" selection-end-column="10" />
+            <state relative-caret-position="326">
+              <caret line="675" column="46" selection-start-line="675" selection-start-column="46" selection-end-line="675" selection-end-column="46" />
               <folding>
                 <element signature="e#0#1049#1" />
                 <element signature="e#1051#1126#0" />
-                <element signature="e#1681#8070#0" />
-                <element signature="e#1681#2965#1" />
-                <element signature="e#3063#3091#0" />
-                <element signature="e#3635#4133#0" />
-                <element signature="e#4167#5086#0" />
-                <element signature="e#4570#4727#0" />
-                <element signature="e#5119#5141#0" />
-                <element signature="e#5254#6464#0" />
-                <element signature="e#5254#5927#1" />
-                <element signature="e#6588#7894#0" />
-                <element signature="e#6588#7325#1" />
-                <element signature="e#7938#8070#0" />
-                <element signature="e#7938#8039#1" />
-                <element signature="e#8114#18074#0" />
-                <element signature="e#8114#16355#1" />
-                <element signature="e#16652#17239#0" />
-                <element signature="e#17273#18019#0" />
-                <element signature="e#17321#17606#0" />
-                <element signature="e#18052#18074#0" />
-                <element signature="e#18125#19834#0" />
-                <element signature="e#18125#19410#1" />
-                <element signature="e#19534#19754#0" />
-                <element signature="e#19572#19754#0" />
-                <element signature="e#19692#19754#0" />
-                <element signature="e#19866#21782#0" />
-                <element signature="e#19866#20753#1" />
-                <element signature="e#20821#20898#0" />
-                <element signature="e#20821#20898#2" />
-                <element signature="e#20976#21401#0" />
-                <element signature="e#20976#21401#2" />
-                <element signature="e#21468#21782#0" />
-                <element signature="e#21468#21782#2" />
-                <element signature="e#21807#23365#0" />
-                <element signature="e#21807#22755#1" />
-                <element signature="e#22889#22987#0" />
-                <element signature="e#23021#23310#0" />
-                <element signature="e#23069#23158#0" />
-                <element signature="e#23343#23365#0" />
-                <element signature="e#23431#25008#0" />
-                <element signature="e#23431#23685#1" />
-                <element signature="e#23756#23969#0" />
-                <element signature="e#24003#24311#0" />
-                <element signature="e#24344#24578#0" />
-                <element signature="e#24651#24823#0" />
-                <element signature="e#24651#24823#2" />
-                <element signature="e#24869#25008#0" />
-                <element signature="e#24869#24969#1" />
-                <element signature="e#25038#27690#0" />
-                <element signature="e#25038#25764#1" />
-                <element signature="e#25852#26126#0" />
-                <element signature="e#26002#26079#0" />
-                <element signature="e#26160#26583#0" />
-                <element signature="e#26616#27261#0" />
-                <element signature="e#26664#26764#0" />
-                <element signature="e#26908#27217#0" />
-                <element signature="e#26948#27152#0" />
-                <element signature="e#27334#27506#0" />
-                <element signature="e#27334#27506#2" />
-                <element signature="e#27550#27690#0" />
-                <element signature="e#27550#27654#1" />
-                <element signature="e#27721#28498#0" />
-                <element signature="e#27721#28007#1" />
-                <element signature="e#28056#28498#0" />
-                <element signature="e#28056#28255#1" />
-                <element signature="e#28299#28463#0" />
-                <element signature="e#28530#29995#0" />
-                <element signature="e#28530#29324#1" />
-                <element signature="e#29373#29995#0" />
-                <element signature="e#29373#29570#1" />
-                <element signature="e#29614#29960#0" />
-                <element signature="e#29835#29900#0" />
-                <element signature="e#30028#33927#0" />
-                <element signature="e#30028#31016#1" />
-                <element signature="e#31164#31513#0" />
-                <element signature="e#31164#31224#0" />
-                <element signature="e#31562#32638#0" />
-                <element signature="e#31562#31762#1" />
-                <element signature="e#31829#32189#0" />
-                <element signature="e#32236#32507#0" />
-                <element signature="e#32681#33694#0" />
-                <element signature="e#32681#32811#1" />
-                <element signature="e#33083#33381#0" />
-                <element signature="e#33089#33230#0" />
-                <element signature="e#33484#33694#0" />
-                <element signature="e#33743#33927#0" />
-                <element signature="e#33743#33895#1" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/README.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor>
+                <caret column="15" selection-start-column="15" selection-end-column="15" />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/docs/api.rst">
+          <provider selected="true" editor-type-id="restructured-text-editor" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/docs/conf.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1800">
+              <caret line="21" column="37" selection-start-line="21" selection-start-column="37" selection-end-line="21" selection-end-column="37" />
+              <folding>
+                <element signature="e#681#690#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3232">
+            <state relative-caret-position="3030">
               <caret line="213" column="24" selection-start-line="213" selection-start-column="24" selection-end-line="213" selection-end-column="24" />
             </state>
           </provider>
@@ -142,6 +97,9 @@
       <find>popex.nmtype</find>
     </findStrings>
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
@@ -157,41 +115,44 @@
         <option value="$PROJECT_DIR$/cnsts.py" />
         <option value="$PROJECT_DIR$/popex_objects.py" />
         <option value="$PROJECT_DIR$/algorithm.py" />
+        <option value="$PROJECT_DIR$/README.md" />
+        <option value="$PROJECT_DIR$/docs/conf.py" />
+        <option value="$PROJECT_DIR$/docs/api.rst" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="1920" />
-    <option name="y" value="-4" />
-    <option name="width" value="1680" />
-    <option name="height" value="1054" />
+    <option name="y" value="25" />
+    <option name="width" value="1280" />
+    <option name="height" value="775" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
             <path>
-              <item name="popex" type="b2602c69:ProjectViewProjectNode" />
-              <item name="popex" type="462c0819:PsiDirectoryNode" />
+              <item name="PoPEx" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PoPEx" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
-              <item name="popex" type="b2602c69:ProjectViewProjectNode" />
-              <item name="popex" type="462c0819:PsiDirectoryNode" />
-              <item name="isampl" type="462c0819:PsiDirectoryNode" />
+              <item name="PoPEx" type="b2602c69:ProjectViewProjectNode" />
+              <item name="PoPEx" type="462c0819:PsiDirectoryNode" />
+              <item name="docs" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/docs" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -218,6 +179,7 @@
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_neff_ne.TestNeff&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
     </configuration>
     <configuration name="Unittests for test_neff_ne.TestNeff.test_alpha" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="popex" />
@@ -231,6 +193,7 @@
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_neff_ne.TestNeff.test_alpha&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
     </configuration>
     <configuration name="Unittests for test_popex_objects_MType.TestMTypes" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="popex" />
@@ -244,6 +207,7 @@
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_popex_objects_MType.TestMTypes&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
     </configuration>
     <configuration name="Unittests for test_popex_objects_PoPEx.TestPoPEx" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="popex" />
@@ -257,6 +221,7 @@
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_popex_objects_PoPEx.TestPoPEx&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
     </configuration>
     <configuration name="Unittests for test_popex_objects_Problem.TestProblem" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="popex" />
@@ -270,6 +235,7 @@
       <option name="_new_additionalArguments" value="&quot;&quot;" />
       <option name="_new_target" value="&quot;test_popex_objects_Problem.TestProblem&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Python tests.Unittests for test_popex_objects_MType.TestMTypes" />
@@ -340,305 +306,28 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="1920" y="-4" width="1680" height="1054" extended-state="6" />
-    <editor active="true" />
+    <frame x="0" y="25" width="1280" height="775" extended-state="6" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.21303561" />
-      <window_info anchor="bottom" id="TODO" order="6" weight="0.32984293" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32984293" />
-      <window_info anchor="bottom" id="Version Control" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Python Console" order="7" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2124105" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
-      <window_info anchor="bottom" id="Terminal" order="7" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.30804953" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" weight="0.32984293" />
+      <window_info anchor="bottom" id="Terminal" order="7" />
+      <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
+      <window_info anchor="bottom" id="Version Control" order="9" />
+      <window_info anchor="bottom" id="Python Console" order="10" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
     </layout>
   </component>
-  <component name="VcsContentAnnotationSettings">
-    <option name="myLimit" value="2678400000" />
-  </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6400">
-          <caret line="416" column="7" selection-start-line="416" selection-start-column="7" selection-end-line="416" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8704">
-          <caret line="551" column="40" selection-start-line="551" selection-start-column="40" selection-end-line="551" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7120">
-          <caret line="456" column="4" selection-start-line="456" selection-start-column="4" selection-end-line="456" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/isampl/neff.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2976">
-          <caret line="190" lean-forward="true" selection-start-line="190" selection-end-line="190" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6400">
-          <caret line="416" column="7" lean-forward="true" selection-start-line="416" selection-start-column="7" selection-end-line="416" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8704">
-          <caret line="551" column="40" selection-start-line="551" selection-start-column="40" selection-end-line="551" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7120">
-          <caret line="456" column="4" selection-start-line="456" selection-start-column="4" selection-end-line="456" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6544">
-          <caret line="425" column="26" lean-forward="true" selection-start-line="425" selection-start-column="26" selection-end-line="425" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8704">
-          <caret line="551" column="40" selection-start-line="551" selection-start-column="40" selection-end-line="551" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7120">
-          <caret line="456" column="4" selection-start-line="456" selection-start-column="4" selection-end-line="456" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6384">
-          <caret line="415" column="44" selection-start-line="415" selection-start-column="44" selection-end-line="415" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8704">
-          <caret line="551" column="40" selection-start-line="551" selection-start-column="40" selection-end-line="551" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7120">
-          <caret line="456" column="4" selection-start-line="456" selection-start-column="4" selection-end-line="456" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6384">
-          <caret line="415" column="44" lean-forward="true" selection-start-line="415" selection-start-column="44" selection-end-line="415" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8704">
-          <caret line="551" column="40" lean-forward="true" selection-start-line="551" selection-start-column="40" selection-end-line="551" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7120">
-          <caret line="456" column="4" selection-start-line="456" selection-start-column="4" selection-end-line="456" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="396" column="41" selection-start-line="396" selection-start-column="41" selection-end-line="396" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="45" column="16" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="112">
-          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="396" column="41" selection-start-line="396" selection-start-column="41" selection-end-line="396" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="45" column="16" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7776">
-          <caret line="497" column="57" lean-forward="true" selection-start-line="497" selection-start-column="57" selection-end-line="497" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="396" column="41" selection-start-line="396" selection-start-column="41" selection-end-line="396" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="45" column="16" lean-forward="true" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7648">
-          <caret line="489" column="30" lean-forward="true" selection-start-line="489" selection-start-column="30" selection-end-line="489" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6736">
-          <caret line="437" column="30" selection-start-line="437" selection-start-column="30" selection-end-line="437" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8512">
-          <caret line="543" column="41" selection-start-line="543" selection-start-column="41" selection-end-line="543" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6736">
-          <caret line="437" column="30" selection-start-line="437" selection-start-column="30" selection-end-line="437" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8512">
-          <caret line="543" column="41" selection-start-line="543" selection-start-column="41" selection-end-line="543" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="736">
-          <caret line="46" selection-start-line="46" selection-end-line="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8512">
-          <caret line="543" column="41" selection-start-line="543" selection-start-column="41" selection-end-line="543" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="736">
-          <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="30" lean-forward="true" selection-start-line="30" selection-end-line="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="14" column="24" lean-forward="true" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="592">
-          <caret line="53" lean-forward="true" selection-start-line="53" selection-end-line="53" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/popex_objects.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="464">
-          <caret line="29" column="17" lean-forward="true" selection-start-line="29" selection-start-column="17" selection-end-line="29" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/isampl/test/test_neff_ne.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="16">
@@ -702,116 +391,53 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/utils.py">
+    <entry file="file://$PROJECT_DIR$/algorithm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3232">
-          <caret line="213" column="24" selection-start-line="213" selection-start-column="24" selection-end-line="213" selection-end-column="24" />
+        <state relative-caret-position="3780">
+          <caret line="268" selection-start-line="268" selection-end-line="268" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/algorithm.py">
+    <entry file="file://$PROJECT_DIR$/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="192">
-          <caret line="268" column="76" selection-start-line="268" selection-start-column="76" selection-end-line="268" selection-end-column="76" />
+        <state relative-caret-position="3030">
+          <caret line="213" column="24" selection-start-line="213" selection-start-column="24" selection-end-line="213" selection-end-column="24" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/popex_objects.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="742" column="10" lean-forward="true" selection-start-line="742" selection-start-column="10" selection-end-line="742" selection-end-column="10" />
+        <state relative-caret-position="326">
+          <caret line="675" column="46" selection-start-line="675" selection-start-column="46" selection-end-line="675" selection-end-column="46" />
           <folding>
             <element signature="e#0#1049#1" />
             <element signature="e#1051#1126#0" />
-            <element signature="e#1681#8070#0" />
-            <element signature="e#1681#2965#1" />
-            <element signature="e#3063#3091#0" />
-            <element signature="e#3635#4133#0" />
-            <element signature="e#4167#5086#0" />
-            <element signature="e#4570#4727#0" />
-            <element signature="e#5119#5141#0" />
-            <element signature="e#5254#6464#0" />
-            <element signature="e#5254#5927#1" />
-            <element signature="e#6588#7894#0" />
-            <element signature="e#6588#7325#1" />
-            <element signature="e#7938#8070#0" />
-            <element signature="e#7938#8039#1" />
-            <element signature="e#8114#18074#0" />
-            <element signature="e#8114#16355#1" />
-            <element signature="e#16652#17239#0" />
-            <element signature="e#17273#18019#0" />
-            <element signature="e#17321#17606#0" />
-            <element signature="e#18052#18074#0" />
-            <element signature="e#18125#19834#0" />
-            <element signature="e#18125#19410#1" />
-            <element signature="e#19534#19754#0" />
-            <element signature="e#19572#19754#0" />
-            <element signature="e#19692#19754#0" />
-            <element signature="e#19866#21782#0" />
-            <element signature="e#19866#20753#1" />
-            <element signature="e#20821#20898#0" />
-            <element signature="e#20821#20898#2" />
-            <element signature="e#20976#21401#0" />
-            <element signature="e#20976#21401#2" />
-            <element signature="e#21468#21782#0" />
-            <element signature="e#21468#21782#2" />
-            <element signature="e#21807#23365#0" />
-            <element signature="e#21807#22755#1" />
-            <element signature="e#22889#22987#0" />
-            <element signature="e#23021#23310#0" />
-            <element signature="e#23069#23158#0" />
-            <element signature="e#23343#23365#0" />
-            <element signature="e#23431#25008#0" />
-            <element signature="e#23431#23685#1" />
-            <element signature="e#23756#23969#0" />
-            <element signature="e#24003#24311#0" />
-            <element signature="e#24344#24578#0" />
-            <element signature="e#24651#24823#0" />
-            <element signature="e#24651#24823#2" />
-            <element signature="e#24869#25008#0" />
-            <element signature="e#24869#24969#1" />
-            <element signature="e#25038#27690#0" />
-            <element signature="e#25038#25764#1" />
-            <element signature="e#25852#26126#0" />
-            <element signature="e#26002#26079#0" />
-            <element signature="e#26160#26583#0" />
-            <element signature="e#26616#27261#0" />
-            <element signature="e#26664#26764#0" />
-            <element signature="e#26908#27217#0" />
-            <element signature="e#26948#27152#0" />
-            <element signature="e#27334#27506#0" />
-            <element signature="e#27334#27506#2" />
-            <element signature="e#27550#27690#0" />
-            <element signature="e#27550#27654#1" />
-            <element signature="e#27721#28498#0" />
-            <element signature="e#27721#28007#1" />
-            <element signature="e#28056#28498#0" />
-            <element signature="e#28056#28255#1" />
-            <element signature="e#28299#28463#0" />
-            <element signature="e#28530#29995#0" />
-            <element signature="e#28530#29324#1" />
-            <element signature="e#29373#29995#0" />
-            <element signature="e#29373#29570#1" />
-            <element signature="e#29614#29960#0" />
-            <element signature="e#29835#29900#0" />
-            <element signature="e#30028#33927#0" />
-            <element signature="e#30028#31016#1" />
-            <element signature="e#31164#31513#0" />
-            <element signature="e#31164#31224#0" />
-            <element signature="e#31562#32638#0" />
-            <element signature="e#31562#31762#1" />
-            <element signature="e#31829#32189#0" />
-            <element signature="e#32236#32507#0" />
-            <element signature="e#32681#33694#0" />
-            <element signature="e#32681#32811#1" />
-            <element signature="e#33083#33381#0" />
-            <element signature="e#33089#33230#0" />
-            <element signature="e#33484#33694#0" />
-            <element signature="e#33743#33927#0" />
-            <element signature="e#33743#33895#1" />
           </folding>
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor>
+            <caret column="15" selection-start-column="15" selection-end-column="15" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/conf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1800">
+          <caret line="21" column="37" selection-start-line="21" selection-start-column="37" selection-end-line="21" selection-end-column="37" />
+          <folding>
+            <element signature="e#681#690#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/docs/api.rst">
+      <provider selected="true" editor-type-id="restructured-text-editor" />
     </entry>
   </component>
 </project>
