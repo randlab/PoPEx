@@ -3,23 +3,24 @@ API of PoPEx Package
 
 The API Documentation of the package
 
+:mod:`popex`
 
 PoPEx algorithm
 ---------------
 
-.. automodule:: algorithm
+.. automodule:: popex.algorithm
    :members:
 
 
 Utilities
 ---------
 
-.. automodule:: utils
+.. automodule:: popex.utils
    :members:
 
 
 Class Definitions
 -----------------
 
-.. automodule:: popex_objects
+.. automodule:: popex.popex_objects
    :members:
