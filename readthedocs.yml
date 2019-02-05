@@ -9,4 +9,4 @@ python:
 requirements_file: requirements.txt
 
 formats:
-- none
+  - none

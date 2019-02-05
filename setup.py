@@ -23,7 +23,7 @@ install_requires = [p_req for p_req in tests_require]
 
 _setup_data = {
     'name':                 'spo_mds',
-    'version':              0.1.0
+    'version':              '0.1.0',
     'description':          'PoPEx sampling package',
     'long_description':     long_description,
 
@@ -38,4 +38,4 @@ _setup_data = {
 }
 
 if __name__ == '__main__':
-setup(**_setup_data)
+    setup(**_setup_data)
