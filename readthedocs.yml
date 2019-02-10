@@ -1,0 +1,12 @@
+build:
+  image: latest
+
+python:
+  version: 3.6
+  setup_py_install: true    # When true install into virtualenv
+  pip_install: true         # When true, install your project into virtualenv
+
+requirements_file: requirements.txt
+
+formats:
+  - none

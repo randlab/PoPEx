@@ -1,0 +1,3 @@
+
+# Requirements not in the std library
+numpy
