@@ -163,122 +163,111 @@
 chain) PoPEx algorithm. Mainly this concerns the two functions</p>
 <blockquote>
 <div><ul class="simple">
-<li>run_popex_mp</li>
-<li>pred_popex_mp</li>
+<li><cite>run_popex_mp</cite></li>
+<li><cite>pred_popex_mp</cite></li>
 </ul>
 </div></blockquote>
 <p>that are used to sample models and predict results. A common file structure for
 a PoPEx run together with some predictions is the following:</p>
 <blockquote>
-<div><dl class="docutils">
-<dt>&lt;path_res&gt;$</dt>
-<dd><dl class="first docutils">
-<dt><a href="#id1"><span class="problematic" id="id2">|</span></a>-&gt; hd</dt>
-<dd>-&gt; hd_modXXXXXX.txt</dd>
-<dt><a href="#id3"><span class="problematic" id="id4">|</span></a>-&gt; model</dt>
-<dd>-&gt; modXXXXXX.mod</dd>
-<dt><a href="#id5"><span class="problematic" id="id6">|</span></a>-&gt; solution</dt>
-<dd>-&gt; run_&lt;name&gt;_modXXXXXX
--&gt; pred_&lt;name&gt;_modXXXXXX</dd>
-</dl>
-<p class="last">-&gt; run_info.txt
--&gt; run_progress.txt
--&gt; pred_progress.txt
--&gt; popex.pop
--&gt; problem.pb</p>
-</dd>
-</dl>
+<div><div class="line-block">
+<div class="line">&lt;path_res&gt;$</div>
+<div class="line-block">
+<div class="line">├– hd</div>
+<div class="line-block">
+<div class="line">└– hd_modXXXXXX.txt</div>
+</div>
+<div class="line">├– model</div>
+<div class="line-block">
+<div class="line">└– modXXXXXX.mod</div>
+</div>
+<div class="line">├– solution</div>
+<div class="line-block">
+<div class="line">├– run_&lt;name&gt;_modXXXXXX</div>
+<div class="line">└– pred_&lt;name&gt;_modXXXXXX</div>
+</div>
+<div class="line">├– run_info.txt</div>
+<div class="line">├– run_progress.txt</div>
+<div class="line">├– pred_progress.txt</div>
+<div class="line">├– popex.pop</div>
+<div class="line">└– problem.pb</div>
+</div>
+</div>
 </div></blockquote>
 <p>The content of the different files is:</p>
 <blockquote>
 <div><ul class="simple">
-<li>hd_modXXXXXX.txt          # Hard conditioning (without prior hd)</li>
-<li>modXXXXXX.mod             # Pickled model object</li>
-<li>run_&lt;name&gt;_modXXXXXX.txt  # Info from forward operator</li>
-<li>pred_&lt;name&gt;_modXXXXXX.txt # Info from prediction operator</li>
-<li>run_info.txt              # Info about the sampling</li>
-<li>run_progress.txt          # Progress summary about the sampling</li>
-<li>pred_progress.txt         # Progress summary about the predictions</li>
-<li>popex.pop                 # Pickled PoPEx object</li>
-<li>problem.pb                # Pickled Problem object</li>
+<li><cite>hd_modXXXXXX.txt</cite>:             Hard conditioning (without prior hd)</li>
+<li><cite>modXXXXXX.mod</cite>:                Pickled model object</li>
+<li><cite>run_&lt;name&gt;_modXXXXXX.txt</cite>:     Info from forward operator</li>
+<li><cite>pred_&lt;name&gt;_modXXXXXX.txt</cite>:    Info from prediction operator</li>
+<li><cite>run_info.txt</cite>:                 Info about the sampling</li>
+<li><cite>run_progress.txt</cite>:             Progress summary about the sampling</li>
+<li><cite>pred_progress.txt</cite>:            Progress summary about the predictions</li>
+<li><cite>popex.pop</cite>:                    Pickled PoPEx object</li>
+<li><cite>problem.pb</cite>:                   Pickled Problem object</li>
 </ul>
 </div></blockquote>
 <dl class="function">
 <dt id="popex.algorithm.pred_popex_mp">
 <code class="descclassname">popex.algorithm.</code><code class="descname">pred_popex_mp</code><span class="sig-paren">(</span><em>pred</em>, <em>path_res</em>, <em>nmp=1</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.algorithm.pred_popex_mp" title="Permalink to this definition">¶</a></dt>
-<dd><p>PRED_POPEX_MP(…) is the main implementation for computing predictions
-of from a PoPEx sampling. The computations are supposed to be independent,
-such that they can be computed in parallel.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>pred</strong> – (Prediction) Defines the prediction functions and
-parameters (see ‘popex_objects.Prediction’ for more
-information)</td>
-</tr>
-</tbody>
-</table>
-<p>:param path_res         (str) Path for loading the PoPEx results
-:param nmp:             (int) Number of parallel processes
-:return: None</p>
+<dd><p><cite>pred_popex_mp</cite> is the main implementation for computing predictions
+from a PoPEx sampling.</p>
+<p>The computations are supposed to be independent, such that they can be
+computed in parallel.</p>
+<dl class="docutils">
+<dt>pred <span class="classifier-delimiter">:</span> <span class="classifier">Prediction</span></dt>
+<dd>Defines the prediction functions and parameters (cf.
+<cite>popex_objects.Prediction</cite> for more information)</dd>
+<dt>path_res <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Path for loading the PoPEx results</dd>
+<dt>nmp <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of parallel processes</dd>
+</dl>
+<p>None</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="popex.algorithm.run_popex_mp">
 <code class="descclassname">popex.algorithm.</code><code class="descname">run_popex_mp</code><span class="sig-paren">(</span><em>pb</em>, <em>path_res</em>, <em>path_q_cat</em>, <em>ncmax=(20</em>, <em>)</em>, <em>nmp=1</em>, <em>nmax=1000</em>, <em>upd_hdmap_freq=1</em>, <em>upd_ls_freq=-1</em>, <em>si_freq=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.algorithm.run_popex_mp" title="Permalink to this definition">¶</a></dt>
-<dd><p>RUN_POPEX_MP(…) is the main implementation of the PoPEx algorithm
-running multiple (parallel) processes. The algorithm expands a set of
-models until the defined stopping condition is fulfilled. A pre-requirement
-of the method is that we know a prior probability map that corresponds to
-a given set of categories (c.f. ‘q_cat’).</p>
-<p>—————————– !!! CAUTION !!! —————————–
-The prior and generation probability values should NEVER be considered as
+<dd><p><cite>run_popex_mp</cite> is the main implementation of the PoPEx algorithm.</p>
+<p>The algorithm expands a set of models until the defined stopping condition
+is fulfilled. A pre-requirement of the method is that we know a prior
+probability map that corresponds to a given set of categories (c.f.
+<cite>q_cat</cite>).</p>
+<p>The prior and generation probability values should NEVER be considered as
 true probability values according to the true distribution. They should
 only be used in combination (as ratio r):</p>
 <blockquote>
 <div>r = prior / generation.</div></blockquote>
 <p>This ratio is important in the importance sampling framework where we want
 to compute weighted expectation values according to a set of generated
-models.
-—————————————————————————</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>pb</strong> – (Problem) Defines the problem functions and
-parameters (see ‘popex_objects.Problem’ for more
-information)</li>
-<li><strong>path_res</strong> – (string) Path to where the results should be saved</li>
-<li><strong>path_q_cat</strong> – (string) Path to the prior probability maps
-in q_cat such that the tuple of nmtype objects can
-be loaded under ‘&lt;path_q_cat&gt;q_cat.prob’</li>
-<li><strong>ncmax</strong> – (m-tuple) Maximal number of conditioning points for
-each model type</li>
-<li><strong>nmp</strong> – (int) Number of parallel processes</li>
-<li><strong>nmax</strong> – (int) Number of maximal models (stopping condition)</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
+models.</p>
 <dl class="docutils">
-<dt>:param upd_hdmap_freq   (int) Defines the frequency for updating the</dt>
-<dd>HD maps (‘kld’ and ‘p_cat’)</dd>
-<dt>:param upd_ls_freq      (int) Defines the frequency for updating the</dt>
-<dd>learning scheme (-1: for no update)</dd>
-<dt>:param si_freq          (int) Defines the frequency of saving intermediate</dt>
-<dd>states (-1: for no intermediate saves)</dd>
+<dt>pb <span class="classifier-delimiter">:</span> <span class="classifier">Problem</span></dt>
+<dd>Defines the problem functions and parameters (see
+‘popex_objects.Problem’ for more information)</dd>
+<dt>path_res <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Path to the ‘results’ folder</dd>
+<dt>path_q_cat <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
+<dd>Path to the prior probability maps <cite>q_cat</cite> such that the tuple of
+<cite>nmtype</cite> objects can be loaded under ‘&lt;path_q_cat&gt;q_cat.prob’</dd>
+<dt>ncmax <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>Maximal number of conditioning points for each model type</dd>
+<dt>nmp <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of parallel processes to use</dd>
+<dt>nmax <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Number of maximal models (stopping condition)</dd>
+<dt>upd_hdmap_freq <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Defines the frequency for updating the HD maps (<cite>kld</cite> and <cite>p_cat</cite>)</dd>
+<dt>upd_ls_freq <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Defines the frequency for updating the learning scheme (-1: for no
+update)</dd>
+<dt>si_freq <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Defines the frequency of saving intermediate states (-1: for no
+intermediate saves)</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
-</tr>
-</tbody>
-</table>
+<p>None</p>
 </dd></dl>
 
 </div>
@@ -725,7 +714,7 @@ for creating a specific model at
 <div><dl class="docutils">
 <dt>&lt;popex.path_res&gt;$</dt>
 <dd><dl class="first last docutils">
-<dt><a href="#id7"><span class="problematic" id="id8">|</span></a>-&gt; hd</dt>
+<dt><a href="#id1"><span class="problematic" id="id2">|</span></a>-&gt; hd</dt>
 <dd>-&gt; hd_modXXXXXX.txt</dd>
 </dl>
 </dd>
@@ -1438,6 +1427,7 @@ the log-likelihood value will ALWAYS be computed.</li>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
     
 
   

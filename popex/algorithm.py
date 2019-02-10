@@ -1,37 +1,38 @@
+# -*- coding: utf-8 -*-
 """ 'algorithm.py' contains the main implementation of the parallel (multiple-
 chain) PoPEx algorithm. Mainly this concerns the two functions
 
-    - run_popex_mp
-    - pred_popex_mp
+    - `run_popex_mp`
+    - `pred_popex_mp`
 
 that are used to sample models and predict results. A common file structure for
 a PoPEx run together with some predictions is the following:
 
-    <path_res>$
-        |-> hd
-            -> hd_modXXXXXX.txt
-        |-> model
-            -> modXXXXXX.mod
-        |-> solution
-            -> run_<name>_modXXXXXX
-            -> pred_<name>_modXXXXXX
-        -> run_info.txt
-        -> run_progress.txt
-        -> pred_progress.txt
-        -> popex.pop
-        -> problem.pb
+    | <path_res>$
+    |  ├-- hd
+    |     └-- hd_modXXXXXX.txt
+    |  ├-- model
+    |     └-- modXXXXXX.mod
+    |  ├-- solution
+    |      ├-- run_<name>_modXXXXXX
+    |      └-- pred_<name>_modXXXXXX
+    |  ├-- run_info.txt
+    |  ├-- run_progress.txt
+    |  ├-- pred_progress.txt
+    |  ├-- popex.pop
+    |  └-- problem.pb
 
 The content of the different files is:
 
-    - hd_modXXXXXX.txt          # Hard conditioning (without prior hd)
-    - modXXXXXX.mod             # Pickled model object
-    - run_<name>_modXXXXXX.txt  # Info from forward operator
-    - pred_<name>_modXXXXXX.txt # Info from prediction operator
-    - run_info.txt              # Info about the sampling
-    - run_progress.txt          # Progress summary about the sampling
-    - pred_progress.txt         # Progress summary about the predictions
-    - popex.pop                 # Pickled PoPEx object
-    - problem.pb                # Pickled Problem object
+    - `hd_modXXXXXX.txt`:             Hard conditioning (without prior hd)
+    - `modXXXXXX.mod`:                Pickled model object
+    - `run_<name>_modXXXXXX.txt`:     Info from forward operator
+    - `pred_<name>_modXXXXXX.txt`:    Info from prediction operator
+    - `run_info.txt`:                 Info about the sampling
+    - `run_progress.txt`:             Progress summary about the sampling
+    - `pred_progress.txt`:            Progress summary about the predictions
+    - `popex.pop`:                    Pickled PoPEx object
+    - `problem.pb`:                   Pickled Problem object
 """
 
 # -------------------------------------------------------------------------
@@ -39,7 +40,7 @@ The content of the different files is:
 #   Year: 2018
 #   Institut: University of Neuchatel
 #
-#   Copyright (c) 2018 Christoph Jaeggli
+#   Copyright (c) 2019 Christoph Jaeggli
 #
 #   This program is distributed in the hope that it will be useful, but
 #   WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -68,13 +69,16 @@ from popex.cnsts import NP_MIN_TOL, RECMP_P_CAT_FREQ
 def run_popex_mp(pb, path_res, path_q_cat,
                  ncmax=(20,), nmp=1, nmax=1000,
                  upd_hdmap_freq=1, upd_ls_freq=-1, si_freq=-1):
-    """ RUN_POPEX_MP(...) is the main implementation of the PoPEx algorithm
-    running multiple (parallel) processes. The algorithm expands a set of
-    models until the defined stopping condition is fulfilled. A pre-requirement
-    of the method is that we know a prior probability map that corresponds to
-    a given set of categories (c.f. 'q_cat').
+    """ `run_popex_mp` is the main implementation of the PoPEx algorithm.
 
-    ----------------------------- !!! CAUTION !!! -----------------------------
+    The algorithm expands a set of models until the defined stopping condition
+    is fulfilled. A pre-requirement of the method is that we know a prior
+    probability map that corresponds to a given set of categories (c.f.
+    `q_cat`).
+
+
+    Notes
+    -----
     The prior and generation probability values should NEVER be considered as
     true probability values according to the true distribution. They should
     only be used in combination (as ratio r):
@@ -84,27 +88,39 @@ def run_popex_mp(pb, path_res, path_q_cat,
     This ratio is important in the importance sampling framework where we want
     to compute weighted expectation values according to a set of generated
     models.
-    ---------------------------------------------------------------------------
 
-    :param pb:              (Problem) Defines the problem functions and
-                            parameters (see 'popex_objects.Problem' for more
-                            information)
-    :param path_res:        (string) Path to where the results should be saved
-    :param path_q_cat:      (string) Path to the prior probability maps
-                            in q_cat such that the tuple of nmtype objects can
-                            be loaded under '<path_q_cat>q_cat.prob'
-    :param ncmax:           (m-tuple) Maximal number of conditioning points for
-                            each model type
-    :param nmp:             (int) Number of parallel processes
-    :param nmax:            (int) Number of maximal models (stopping condition)
-    :param upd_hdmap_freq   (int) Defines the frequency for updating the
-                            HD maps ('kld' and 'p_cat')
-    :param upd_ls_freq      (int) Defines the frequency for updating the
-                            learning scheme (-1: for no update)
-    :param si_freq          (int) Defines the frequency of saving intermediate
-                            states (-1: for no intermediate saves)
-    :return: None
+
+    Parameters
+    ----------
+    pb : Problem
+        Defines the problem functions and parameters (see
+        'popex_objects.Problem' for more information)
+    path_res : str
+        Path to the 'results' folder
+    path_q_cat : str
+        Path to the prior probability maps `q_cat` such that the tuple of
+        `nmtype` objects can be loaded under '<path_q_cat>q_cat.prob'
+    ncmax : m-tuple
+        Maximal number of conditioning points for each model type
+    nmp : int
+        Number of parallel processes to use
+    nmax : int
+        Number of maximal models (stopping condition)
+    upd_hdmap_freq : int
+        Defines the frequency for updating the HD maps (`kld` and `p_cat`)
+    upd_ls_freq : int
+         Defines the frequency for updating the learning scheme (-1: for no
+         update)
+    si_freq : int
+         Defines the frequency of saving intermediate states (-1: for no
+         intermediate saves)
+
+
+    Returns
+    -------
+    None
     """
+
     # Initialization
     nmtype = pb.nmtype
     tst_run = time.time()
@@ -263,31 +279,49 @@ def run_popex_mp(pb, path_res, path_q_cat,
 def _run_process(pb, popex, imod,
                  hd_prior_param_ind, hd_prior_param_val,
                  kld, p_cat, q_cat):
-    """ _RUN_PROCESS(...) is the method that can be used to sample a new model
-    in the PoPEx procedure. It mainly generates a new model and computes the
+    """ `_run_process` is the method that can be used to sample a new model in
+    the PoPEx procedure. It mainly generates a new model and computes the
     corresponding log-likelihood value.
 
-    :param pb:                  (Problem) (see 'popex_objects.Problem')
-    :param popex:               (PoPEx)   (see 'popex_objects.PoPEx')
-    :param imod:                (int) Model index
-    :param hd_prior_param_ind:  (m-tuple) (see 'pb.get_hd_pri')
-    :param hd_prior_param_val:  (m-tuple) (see 'pb.get_hd_pri')
-    :param kld:                 (m-tuple) (see 'pb.compute_kld')
-    :param p_cat:               (m-tuple) Weighted category probabilities
-    :param q_cat:               (m-tuple) Prior category probabilities
-    :return:                    (tuple) (imod, model, ncmod, log_p_lik,
-                                         cmp_log_p_lik, log_p_pri, log_p_gen)
-        return[0]               (int) Model index
-        return[1]               (m-tuple) Tuple of 'MType' instances that
-                                define the new model
-        return[2]               (m-tuple) Number of hard conditioning for each
-                                model type
-        return[3]               (float) Log-likelihood value
-        return[4]               (bool) Log-likelihood was computed (True) or
-                                predicted (False)
-        return[5]               (float) Log-prior probability of the model
-        return[6]               (float) Log-sampling probability of the model
+
+    Parameters
+    ----------
+    pb : Problem
+        Problem definition (cf `popex_objects.Problem`)
+    popex : PoPEx
+        PoPEx main structure (cf `popex_objects.PoPEx`)
+    imod : int
+        Model index
+    hd_prior_param_ind : m-tuple
+        Prior hard conditioning indices (cf. `pb.get_hd_pri`)
+    hd_prior_param_val : m-tuple
+        Prior hard conditioning values (cf. `pb.get_hd_pri`)
+    kld : m-tuple
+        Kullback-Leibler divergence map (cf. 'pb.compute_kld')
+    p_cat : m-tuple
+        Weighted category probabilities
+    q_cat : m-tuple
+        Prior category probabilities
+
+
+    Returns
+    -------
+    imod : int
+        Model index
+    model : m-tuple
+        Tuple of ``Mtype`` instances that define the new model
+    ncmod : m-tuple
+        Number of hard conditioning for each model type
+    log_p_lik : float
+        Log-likelihood value
+    cmp_log_p_lik : bool
+        Log-likelihood was computed (True) or predicted (False)
+    log_p_pri : float
+        Log-prior probability of the model
+    log_p_gen : float
+        Log-sampling probability of the model
     """
+
     np.random.seed(pb.seed + imod)
     meth_w_hd = pb.meth_w_hd
 
@@ -333,19 +367,34 @@ def _run_process(pb, popex, imod,
 
 
 def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
-    """ WRITE_RUN_SUM(...) writes a document that summarized the overall
-    progress of the popex run at 'popex.path_res'. The file structure is the
-    following:
-        <popex.path_res>$
-            -> run_progress.txt
+    """ `_write_run_sum` writes a document that summarized the overall
+    progress of the popex run at 'popex.path_res'.
 
-    :param pb:              (Problem) (see 'popex_objects.Problem')
-    :param popex:           (PoPEx) (see 'popex_objects.PoPEx')
-    :param nmax:            (int) Number of maximal models
-    :param t_popex:         (float) Total time elapsed
-    :param t_mod:           (float) Average time per model
-    :return: None
+
+    The file structure is as followes:
+        | <popex.path_res>$
+        |    └- run_progress.txt
+
+
+    Parameters
+    ----------
+    pb : Problem
+        Problem definition (cf `popex_objects.Problem`)
+    popex : PoPEx
+        PoPEx main structure (cf `popex_objects.PoPEx`)
+    nmax : int
+        Number of maximal models
+    t_popex : float
+        Total time elapsed
+    t_mod : float
+        Average time per model
+
+
+    Returns
+    -------
+    None
     """
+
     # Generic constants
     bar_width = 40
 
@@ -420,16 +469,30 @@ def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
 
 
 def pred_popex_mp(pred, path_res, nmp=1):
-    """ PRED_POPEX_MP(...) is the main implementation for computing predictions
-    of from a PoPEx sampling. The computations are supposed to be independent,
-    such that they can be computed in parallel.
+    """ `pred_popex_mp` is the main implementation for computing predictions
+    from a PoPEx sampling.
 
-    :param pred:            (Prediction) Defines the prediction functions and
-                            parameters (see 'popex_objects.Prediction' for more
-                            information)
-    :param path_res         (str) Path for loading the PoPEx results
-    :param nmp:             (int) Number of parallel processes
-    :return: None
+
+    Notes
+    -----
+    The computations are supposed to be independent, such that they can be
+    computed in parallel.
+
+
+    Parameters
+    ----------
+    pred : Prediction
+        Defines the prediction functions and parameters (cf.
+        `popex_objects.Prediction` for more information)
+    path_res : str
+        Path for loading the PoPEx results
+    nmp : int
+        Number of parallel processes
+
+
+    Returns
+    -------
+    None
     """
     # Start PoPEx predictions
     tst_pred = time.time()
@@ -495,33 +558,56 @@ def pred_popex_mp(pred, path_res, nmp=1):
 
 
 def _pred_process(pred, popex, imod):
-    """ _PRED_PROCESS(...) is the method that can be used to compute a
-    prediction from one model in a PoPEx sampling.
+    """ `_pred_process` is the method that can be used to compute a prediction
+    from one model in a PoPEx sampling.
 
-    :param pred:                (Prediction) Defines the prediction functions
-                                and parameters (see 'popex_objects.Prediction'
-                                for more information)
-    :param popex:               (PoPEx) (see 'popex_objects.PoPEx')
-    :param imod                 (int) Model index
-    :return:  None
+
+    Parameters
+    ----------
+    pred : Prediction
+        Defines the prediction functions and parameters (cf
+        `popex_objects.Prediction` for more information)
+    popex : PoPEx
+        PoPEx main structure (cf `popex_objects.PoPEx`)
+    imod : int
+        Model index
+
+
+    Returns
+    -------
+    None
     """
     pred.compute_pred(popex, imod)
     return imod
 
 
 def _write_pred_sum(path_res, ipred, ndone, ntot, t_pred):
-    """ WRITE_PRED_SUM(...) writes a document that summarized the overall
-    progress of the predictions at 'popex.path_res'. The file structure is the
-    following:
-        <popex.path_res>$
-            -> pred_progress.txt
+    """ `_write_pred_sum` writes a text file that summarized the overall
+    progress of the predictions at 'popex.path_res'.
 
-    :param path_res:        (string) Path to where the results should be saved
-    :param ipred:           (int) Index of last predictions
-    :param ndone:           (int) Number of computed predictions
-    :param ntot:            (int) Number of total predictions
-    :param t_pred:          (float) Total time elapsed
-    :return: None
+
+    The file structure is as followes:
+        | <popex.path_res>$
+        |    └- pred_progress.txt
+
+
+    Parameters
+    ----------
+    path_res : str
+        Path to where the results should be saved
+    ipred : int
+        Index of last predictions
+    ndone : int
+        Number of computed predictions
+    ntot : int
+        Number of total predictions
+    t_pred : float
+        Total time elapsed
+
+
+    Returns
+    -------
+    None
     """
     # Generic constants
     bar_width = 40
