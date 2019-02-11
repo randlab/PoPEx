@@ -28,10 +28,10 @@ Generic functions
 
 # -------------------------------------------------------------------------
 #   Authors: Christoph Jaeggli, Julien Straubhaar and Philippe Renard
-#   Year: 2018
-#   Institut: University of Neuchatel
+#   Year: 2019
+#   Institut: University of Neuchâtel
 #
-#   Copyright (c) 2018 Christoph Jaeggli
+#   Copyright (c) 2019 Christoph Jaeggli
 #
 #   This program is distributed in the hope that it will be useful, but
 #   WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -345,67 +345,88 @@ def compute_kld(p_cat, q_cat):
 
 # Hard conditioning data
 def generate_hd(popex, meth_w_hd, ncmod, kld, p_cat, q_cat):
-    """ GENERATE_HD(...) generates the hard conditioning data set that is used
-    to sample a new model. This set does NOT include prior hard conditioning.
-    For each model type (imtype), every hard conditioning is obtained by the
+    """ `generate_hd` generates the hard conditioning data set that is used
+    to sample a new model.
+
+    This set of hard conditioning data does NOT include prior hard conditioning.
+    For each model type `(imtype)`, every hard conditioning is obtained by the
     following 2-steps:
 
-        (a) Sample a location [j] according to the values in the Kullback-
-            Leibler divergence map (i.e. the values in 'kld[imtype].param_val')
-        (b) Sample a model [k] according to the weights from 'utl.compute_w'
-            and directly extract the hard conditioning value from
-            'popex.model[k][imtype].param_val[j]'.
+        (a) Sample a location `[j]` according to the values in the Kullback-
+            Leibler divergence map (i.e. the values in `kld[imtype].param_val`)
+        (b) Sample a model `[k]` according to the weights from
+            :meth:`compute_w_lik` and directly extract the hard conditioning
+            value from `popex.model[k][imtype].param_val[j]`.
 
     In addition to the hard conditioning, this function also extracts
-    probability values from 'q_cat' and 'p_cat' at the conditioning location.
+    probability values from `q_cat` and `p_cat` at the conditioning location.
     These values represent the prior/weighted category probability of the
-    category that corresponds to 'popex.model[k][imtype].param_val[j]'. They
+    category that corresponds to `popex.model[k][imtype].param_val[j]`. They
     can be useful to compute the sampling weight ratio.
 
-    THERE ARE TWO IMPORTANT THINGS TO NOTE:
-    (1) The two objects 'hd_prior' and 'hd_generation' are the corresponding
-    prior and weighted probability values of the hard conditioning CATEGORY
-    that corresponds to the values in 'hd_param_val'. Therefore, if they are
-    used in the computation of the sampling weight ratio, one uses CATEGORY
-    probabilities and NOT value probabilities.
+    Notes
+    -----
+    There are two important thins to note:
 
-    (2) Numerical imperfections (for example in the computation of 'q_cat') can
-    cause locations where 'p_cat' > 0 but 'q_cat' = 0. In the computation of
-    the Kullback-Leibler divergence we did put corresponding kld values to 0
-    (by putting 'q_cat' = 'p_cat') and therefore it is impossible to sample and
-    condition such locations.
+        (1) The two objects `hd_prior` and `hd_generation` are the corresponding
+        prior and weighted probability values of the hard conditioning CATEGORY
+        that corresponds to the values in `hd_param_val`. Therefore, if they are
+        used in the computation of the sampling weight ratio, one uses CATEGORY
+        probabilities and NOT value probabilities.
 
-    :param popex:       (PoPEx) (see 'popex_objects.PoPEx')
-    :param meth_w_hd:   (dict) (see 'utils.compute_w_lik')
-    :param ncmod:       (m-tuple) Number of conditioning points per model type
-    :param kld:         (m-tuple) Tuple of 'ContParam' instances with
-                        kld[i].param_val being an ndarray of shape
-                        (nparam_i,)
-    :param p_cat:       (m-tuple) Tuple of 'CatProb' instances with
-                        p_cat[i].param_val being an ndarray of shape
-                        (nparam_i x nfac_i)
-    :param q_cat:       (m-tuple) Tuple of 'CatProb' instances with
-                        q_cat[i].param_val being an ndarray of shape
-                        (nparam_i x nfac_i)
-    :return:            (tuple) (hd_ind, hd_val, hd_pri, hd_gen)
-            return[0]   (m-tuple) Tuple of hard conditioning indices where
-                        hard conditioning values are imposed. If there is no
-                        hard conditioning for a model type i, then return[0][i]
-                        is 'None'.
-            return[1]   (m-tuple) Tuple of hard conditioning values that should
-                        be imposed at the hard conditioning indices. If there
-                        is no hard conditioning for a model type i, then
-                        return[1][i] is 'None'.
-            return[2]   (m-tuple) Tuple of probability values according to the
-                        prior probability maps in 'q_cat'. Each value
-                        corresponds to the prior probability of the category
-                        that covers the extracted hard conditioning value.
-            return[3]   (m-tuple) Tuple of probability values according to the
-                        sampling probability maps in 'p_cat'. Each value
-                        corresponds to the sampling probability of the category
-                        that covers the extracted hard conditioning values.
-            return[i][j]    (ncmod[i], ndarray) Numpy array of indices or
-                            values
+        (2) Numerical imperfections (for example in the computation of 'q_cat')
+        can cause locations where `p_cat > 0` but `q_cat = 0`. In the
+        computation of the Kullback-Leibler divergence we did put corresponding
+        `kld` values to `0` (by enforcing `q_i(x) = p_i(x)`) and therefore it is
+        impossible to sample and condition such locations.
+
+
+    Parameters
+    ----------
+    popex : PoPEx
+        PoPEx main structure (cf `popex_objects.PoPEx`)
+    meth_w_hd : dict
+        Method to compute hard conditioning weights (cf. `utils.compute_w_lik`)
+    ncmod : m-tuple
+        Number of conditioning points per model type
+    kld : m-tuple
+        Tuple of ``ContParam`` instances defining the Kullback-Leibler
+        divergence
+    p_cat : m-tuple
+        Tuple of ``CatProb`` instances defining the weighted category
+        probabilities with `p_cat[i].param_val` being an ``ndarray`` of
+        `shape=(nparam_i, nfac_i)`
+    q_cat : m-tuple
+        Tuple of ``CatProb`` instances defining the weighted category
+        probabilities with `q_cat[i].param_val` being an ``ndarray`` of
+        `shape=(nparam_i x nfac_i)`
+
+
+    Returns
+    -------
+    tuple) (hd_ind, hd_val, hd_pri, hd_gen)
+    hd_param_ind : m-tuple
+        Tuple of hard conditioning indices where hard conditioning values are
+        imposed. If there is no hard conditioning for a model type `i`, then
+        `hd_ind[i]` is ``None`` otherwise it is an ``ndarray`` of
+        `shape=(ncmod[i], ndarray)`.
+    hd_param_val : m-tuple
+        Tuple of hard conditioning values that are imposed at the hard
+        conditioning indices. If there is no hard conditioning for a model type
+        `i`, then `hd_val[i]` is ``None`` otherwise it is an ``ndarray`` of
+        `shape=(ncmod[i], ndarray)`.
+    hd_prior :  m-tuple
+        Tuple of probability values according to the prior probability maps in
+        `q_cat`. Each value corresponds to the prior probability of the category
+        that contains the extracted hard conditioning value.  If there is no
+        hard conditioning for a model type `i`, then `hd_val[i]` is ``None``
+        otherwise it is an ``ndarray`` of `shape=(ncmod[i], ndarray)`.
+    hd_generation : m-tuple
+        Tuple of probability values according to the sampling probability maps
+        in `p_cat`. Each value corresponds to the sampling probability of the
+        category that contains the extracted hard conditioning values. If there
+        is no hard conditioning for a model type `i`, then `hd_val[i]` is
+        ``None`` otherwise it is an ``ndarray`` of `shape=(ncmod[i], ndarray)`.
     """
     # Raise all numpy errors
     old_settings = np.seterr(all='raise')

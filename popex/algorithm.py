@@ -37,8 +37,8 @@ The content of the different files is:
 
 # -------------------------------------------------------------------------
 #   Authors: Christoph Jaeggli, Julien Straubhaar and Philippe Renard
-#   Year: 2018
-#   Institut: University of Neuchatel
+#   Year: 2019
+#   Institut: University of Neuchâtel
 #
 #   Copyright (c) 2019 Christoph Jaeggli
 #
