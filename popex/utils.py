@@ -207,24 +207,39 @@ def update_cat_prob(p_cat, m_new, w_new, sum_w_old):
 
 
 def compute_entropy(p_cat):
-    """ COMPUTE_KLD(...) computes the entropy of p_cat. The entropy of a
-    discrete probability distributions p = (p_1, ...,p_s) is
+    """ `compute_entropy` computes the entropy of `p_cat`.
 
-        H(p) = -\sum_{i=1}^s p_i log( p_i ).
+    The entropy of a discrete probability distributions `p = (p_1, ...,p_s)` is
 
-    Therefore, if the probability map p_cat is a m-tuples such that
-    p_cat[i].param_val is an ndarray of shape (nparam_i x nfac_i), the entropy
-    is also an m-tuple where H[i].param_val is an ndarray of shape (nparam,).
+        `H(p) = -\sum_{i=1}^s p_i log( p_i )`.
 
-    Note that t*log(t) -> 0 as t -> 0. Therefore, H(x) = 0 wherever p_i(x) = 0.
+    Therefore, if the probability map `p_cat` is a ``m-tuple`` such that
+    `p_cat[i].param_val` is an ``ndarray`` of `shape=(nparam_i, nfac_i)`, the
+    entropy is also an ``m-tuple`` where `H[i].param_val` being an ``ndarray``
+    of `shape=(nparam,)`.
 
-    :param p_cat:       (m-tuple) Tuple of 'CatProb' instances with
-                        p_cat[i].param_val being an ndarray of shape
-                        (nparam_i x nfac_i)
-    :return:            (m-tuple) Tuple of entropy maps
-        return[i]       (None or ContParam) Return value i is only 'None' if
-                        p_cat[i] is None, otherwise it is an instance of
-                        'ContParam'
+    Notes
+    -----
+    Note that `t*log(t) -> 0` as `t -> 0`. Therefore, `H(x) = 0` wherever
+    `p_i(x) = 0`.
+
+
+    Parameters
+    ----------
+    p_cat : m-tuple
+        Tuple of ``CatProb`` instances with `p_cat[i].param_val` being an
+        ``ndarray`` of `shape=(nparam_i, nfac_i)`
+
+
+    Returns
+    -------
+    m-tuple
+        Tuple of entropy maps
+
+        `return[i]` : ``None`` or ``ContParam``
+            Return value `i` is ``None`` if `p_cat[i]` is ``None``, otherwise
+            it is an instance of ``ContParam``
+
     """
     nmtype = len(p_cat)
 
@@ -250,35 +265,47 @@ def compute_entropy(p_cat):
 
 
 def compute_kld(p_cat, q_cat):
-    """ COMPUTE_KLD(...) computes the Kullback-Leibler divergence (KLD) between
-    two category probability maps, p_cat and q_cat. The KLD between two
-    discrete probability distributions p = (p_1, ...,p_s) and
-    q = (q_1, ...,q_s) is
+    """ `compute_kld` computes the Kullback-Leibler divergence (KLD) between
+    two category probability maps `p_cat` and `q_cat`.
 
-        KLD(p||q) = \sum_{i=1}^s p_i log( p_i / q_i).
+    The KLD between two discrete probability distributions `p = (p_1, ...,p_s)`
+    and `q = (q_1, ...,q_s)` is
 
-    Therefore, if the probability maps p_cat and q_cat are m-tuples such that
-    p_cat[i].param_val and q_cat[i].param_val are ndarrays of shape
-    (nparam_i x nfac_i), the Kullback-Leibler divergence is also an m-tuple
-    where kld[i].param_val is an ndarray of shape (nparam,).
+        `KLD(p||q) = \sum_{i=1}^s p_i log( p_i / q_i)`.
 
-    Note that t*log(t/a) -> 0 as t -> 0. Therefore, we require that q_i(x) = 0
-    implies p_i(x) = 0 in which case we can put kld(x) = 0. However, due to an
-    insufficient representation of the probability maps, it is possible that
-    q_i(x) = 0 and p_i(x) > 0 (f.e. when q has been approximated from a
-    small set of models). In this case we put q_i(x) = p_i(x) what leads to
-    kld(x) = 0.
+    Therefore, if the probability maps `p_cat` and `q_cat` are ``m-tuples`` such
+    that `p_cat[i].param_val` and `q_cat[i].param_val` are ``ndarrays`` of
+    `shape=(nparam_i, nfac_i)`, the Kullback-Leibler divergence is also an
+    ``m-tuple`` where `kld[i].param_val` is an ``ndarray`` of `shape=(nparam,)`.
 
-    :param p_cat:       (m-tuple) Tuple of 'CatProb' instances with
-                        p_cat[i].param_val being an ndarray of shape
-                        (nparam_i x nfac_i)
-    :param q_cat:       (m-tuple) Tuple of 'CatProb' instances with
-                        q_cat[i].param_val being an ndarray of shape
-                        (nparam_i x nfac_i)
-    :return:            (m-tuple) Tuple of kld maps
-        return[i]       (None or ContParam) Return value i is only 'None' if
-                        p_cat[i] is None, otherwise it is an instance of
-                        'ContParam'
+
+    Notes
+    -----
+    Note that `t*log(t/a) -> 0` as `t -> 0`. Therefore, we require that `q_i(x)
+    = 0` implies `p_i(x) = 0` in which case we can put `kld(x) = 0`. However,
+    due to the (inaccurate) numerical representation of the probability maps, it
+    is possible that `q_i(x) = 0` and `p_i(x) > 0` (f.e. when `q` has been
+    approximated from a relative small set of models). In this case we enforce
+    `q_i(x) = p_i(x)` what leads to `kld(x) = 0`.
+
+
+    Parameters
+    ----------
+    p_cat : m-tuple
+        Tuple of ``CatProb`` instances with `p_cat[i].param_val` being an
+        ``ndarray`` of `shape=(nparam_i x nfac_i)`
+    q_cat : m-tuple
+        Tuple of ``CatProb`` instances with `q_cat[i].param_val` being an
+        ``ndarray`` of `shape=(nparam_i, nfac_i)`
+
+
+    Returns
+    -------
+    m-tuple
+        Tuple of kld maps
+        `return[i]` : ``None`` or ``ContParam``
+            Return value `i` is ``None`` if `p_cat[i]`` is ``None``, otherwise
+            it is an instance of ``ContParam``
     """
     nmtype = len(p_cat)
 
