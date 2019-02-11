@@ -159,12 +159,12 @@
 <p><code class="xref py py-mod docutils literal notranslate"><span class="pre">popex</span></code></p>
 <div class="section" id="module-popex.algorithm">
 <span id="popex-algorithm"></span><h2>PoPEx algorithm<a class="headerlink" href="#module-popex.algorithm" title="Permalink to this headline">¶</a></h2>
-<p>‘algorithm.py’ contains the main implementation of the parallel (multiple-
+<p><cite>algorithm.py</cite> contains the main implementation of the parallel (multiple-
 chain) PoPEx algorithm. Mainly this concerns the two functions</p>
 <blockquote>
 <div><ul class="simple">
-<li><cite>run_popex_mp</cite></li>
-<li><cite>pred_popex_mp</cite></li>
+<li><a class="reference internal" href="#popex.algorithm.run_popex_mp" title="popex.algorithm.run_popex_mp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">run_popex_mp()</span></code></a>: Main implementation for PoPEx runs</li>
+<li><a class="reference internal" href="#popex.algorithm.pred_popex_mp" title="popex.algorithm.pred_popex_mp"><code class="xref py py-meth docutils literal notranslate"><span class="pre">pred_popex_mp()</span></code></a>: Main implementation for PoPEx predictions</li>
 </ul>
 </div></blockquote>
 <p>that are used to sample models and predict results. A common file structure for
@@ -213,18 +213,29 @@ a PoPEx run together with some predictions is the following:</p>
 <code class="descclassname">popex.algorithm.</code><code class="descname">pred_popex_mp</code><span class="sig-paren">(</span><em>pred</em>, <em>path_res</em>, <em>nmp=1</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.algorithm.pred_popex_mp" title="Permalink to this definition">¶</a></dt>
 <dd><p><cite>pred_popex_mp</cite> is the main implementation for computing predictions
 from a PoPEx sampling.</p>
+<p class="rubric">Notes</p>
 <p>The computations are supposed to be independent, such that they can be
 computed in parallel.</p>
-<dl class="docutils">
-<dt>pred <span class="classifier-delimiter">:</span> <span class="classifier">Prediction</span></dt>
-<dd>Defines the prediction functions and parameters (cf.
-<cite>popex_objects.Prediction</cite> for more information)</dd>
-<dt>path_res <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Path for loading the PoPEx results</dd>
-<dt>nmp <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>Number of parallel processes</dd>
-</dl>
-<p>None</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pred</strong> (<a class="reference internal" href="#popex.popex_objects.Prediction" title="popex.popex_objects.Prediction"><em>Prediction</em></a>) – Defines the prediction functions and parameters (cf.
+<cite>popex_objects.Prediction</cite> for more information)</li>
+<li><strong>path_res</strong> (<em>str</em>) – Path for loading the PoPEx results</li>
+<li><strong>nmp</strong> (<em>int</em>) – Number of parallel processes</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
@@ -235,139 +246,123 @@ computed in parallel.</p>
 is fulfilled. A pre-requirement of the method is that we know a prior
 probability map that corresponds to a given set of categories (c.f.
 <cite>q_cat</cite>).</p>
+<p class="rubric">Notes</p>
 <p>The prior and generation probability values should NEVER be considered as
 true probability values according to the true distribution. They should
 only be used in combination (as ratio r):</p>
 <blockquote>
-<div>r = prior / generation.</div></blockquote>
+<div><cite>r = prior / generation</cite>.</div></blockquote>
 <p>This ratio is important in the importance sampling framework where we want
 to compute weighted expectation values according to a set of generated
 models.</p>
-<dl class="docutils">
-<dt>pb <span class="classifier-delimiter">:</span> <span class="classifier">Problem</span></dt>
-<dd>Defines the problem functions and parameters (see
-‘popex_objects.Problem’ for more information)</dd>
-<dt>path_res <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Path to the ‘results’ folder</dd>
-<dt>path_q_cat <span class="classifier-delimiter">:</span> <span class="classifier">str</span></dt>
-<dd>Path to the prior probability maps <cite>q_cat</cite> such that the tuple of
-<cite>nmtype</cite> objects can be loaded under ‘&lt;path_q_cat&gt;q_cat.prob’</dd>
-<dt>ncmax <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
-<dd>Maximal number of conditioning points for each model type</dd>
-<dt>nmp <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>Number of parallel processes to use</dd>
-<dt>nmax <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>Number of maximal models (stopping condition)</dd>
-<dt>upd_hdmap_freq <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>Defines the frequency for updating the HD maps (<cite>kld</cite> and <cite>p_cat</cite>)</dd>
-<dt>upd_ls_freq <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>Defines the frequency for updating the learning scheme (-1: for no
-update)</dd>
-<dt>si_freq <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
-<dd>Defines the frequency of saving intermediate states (-1: for no
-intermediate saves)</dd>
-</dl>
-<p>None</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pb</strong> (<a class="reference internal" href="#popex.popex_objects.Problem" title="popex.popex_objects.Problem"><em>Problem</em></a>) – Defines the problem functions and parameters (see
+‘popex_objects.Problem’ for more information)</li>
+<li><strong>path_res</strong> (<em>str</em>) – Path to the ‘results’ folder</li>
+<li><strong>path_q_cat</strong> (<em>str</em>) – Path to the prior probability maps <cite>q_cat</cite> such that the tuple of
+<cite>nmtype</cite> objects can be loaded under ‘&lt;path_q_cat&gt;q_cat.prob’</li>
+<li><strong>ncmax</strong> (<em>m-tuple</em>) – Maximal number of conditioning points for each model type</li>
+<li><strong>nmp</strong> (<em>int</em>) – Number of parallel processes to use</li>
+<li><strong>nmax</strong> (<em>int</em>) – Number of maximal models (stopping condition)</li>
+<li><strong>upd_hdmap_freq</strong> (<em>int</em>) – Defines the frequency for updating the HD maps (<cite>kld</cite> and <cite>p_cat</cite>)</li>
+<li><strong>upd_ls_freq</strong> (<em>int</em>) – Defines the frequency for updating the learning scheme (-1 for no
+update)</li>
+<li><strong>si_freq</strong> (<em>int</em>) – Defines the frequency of saving intermediate states (-1 for no
+intermediate saves)</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
 <div class="section" id="module-popex.utils">
 <span id="utilities"></span><h2>Utilities<a class="headerlink" href="#module-popex.utils" title="Permalink to this headline">¶</a></h2>
-<p>‘utils.py’ contains the utilities for computing PoPEx samplings and
+<p><cite>utils.py</cite> contains the utilities for computing PoPEx samplings and
 predictions:</p>
 <dl class="docutils">
 <dt>Category probabilities and kld maps</dt>
 <dd><ul class="first last simple">
-<li>compute_cat_prob      Computes probability maps according to categories</li>
-<li>update_cat_prob       Updates probability maps according to categories</li>
-<li>compute_entropy       Computes entropy of a probability map</li>
-<li>compute_kld           Computes kld of two probability maps</li>
+<li><a class="reference internal" href="#popex.utils.compute_cat_prob" title="popex.utils.compute_cat_prob"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_cat_prob()</span></code></a>:   Computes probability maps according to
+categories</li>
+<li><a class="reference internal" href="#popex.utils.update_cat_prob" title="popex.utils.update_cat_prob"><code class="xref py py-meth docutils literal notranslate"><span class="pre">update_cat_prob()</span></code></a>:    Updates probability maps according to
+categories</li>
+<li><a class="reference internal" href="#popex.utils.compute_entropy" title="popex.utils.compute_entropy"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_entropy()</span></code></a>:    Computes entropy of a probability map</li>
+<li><a class="reference internal" href="#popex.utils.compute_kld" title="popex.utils.compute_kld"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_kld()</span></code></a>:        Computes kld of two probability maps</li>
 </ul>
 </dd>
 <dt>Hard conditioning data</dt>
 <dd><ul class="first last simple">
-<li>generate_hd           Computes the new hard conditioning data</li>
-<li>merge_hd              Merges prior and new hard conditioning data</li>
-<li><dl class="first docutils">
-<dt>compute_ncmod         Computes the number of conditioning points per</dt>
-<dd>model type</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt>compute_w_lik         Computes the likelihood weights (used for the hard</dt>
-<dd>conditioning maps)</dd>
-</dl>
-</li>
+<li><a class="reference internal" href="#popex.utils.generate_hd" title="popex.utils.generate_hd"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_hd()</span></code></a>:        Computes the new hard conditioning data</li>
+<li><a class="reference internal" href="#popex.utils.merge_hd" title="popex.utils.merge_hd"><code class="xref py py-meth docutils literal notranslate"><span class="pre">merge_hd()</span></code></a>:           Merges prior and new hard conditioning data</li>
+<li><a class="reference internal" href="#popex.utils.compute_ncmod" title="popex.utils.compute_ncmod"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_ncmod()</span></code></a>:      Computes the number of conditioning points per
+model type</li>
+<li><a class="reference internal" href="#popex.utils.compute_w_lik" title="popex.utils.compute_w_lik"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_w_lik()</span></code></a>:      Computes the likelihood weights (used for the
+hard conditioning maps)</li>
 </ul>
 </dd>
 <dt>Generic functions</dt>
 <dd><ul class="first last simple">
-<li>compute_w_pred        Computes the weights for the predictions</li>
-<li><dl class="first docutils">
-<dt>compute_subset_ind    Computes the smallest number of indices that cover</dt>
-<dd>a given percentage of a total weight</dd>
-</dl>
-</li>
-<li>write_hd_info         Writes/saves hd information about each model</li>
-<li>write_run_info        Appends information about models to run info file</li>
+<li><a class="reference internal" href="#popex.utils.compute_w_pred" title="popex.utils.compute_w_pred"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_w_pred()</span></code></a>:     Computes the weights for the predictions</li>
+<li><a class="reference internal" href="#popex.utils.compute_subset_ind" title="popex.utils.compute_subset_ind"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_subset_ind()</span></code></a>: Computes the smallest number of indices that
+cover a given percentage of a total weight</li>
+<li><a class="reference internal" href="#popex.utils.write_hd_info" title="popex.utils.write_hd_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_hd_info()</span></code></a>:      Writes/saves hd information about each model</li>
+<li><a class="reference internal" href="#popex.utils.write_run_info" title="popex.utils.write_run_info"><code class="xref py py-meth docutils literal notranslate"><span class="pre">write_run_info()</span></code></a>:     Appends information about models to run info
+file</li>
 </ul>
 </dd>
 </dl>
 <dl class="function">
 <dt id="popex.utils.compute_cat_prob">
 <code class="descclassname">popex.utils.</code><code class="descname">compute_cat_prob</code><span class="sig-paren">(</span><em>popex</em>, <em>weights</em>, <em>start=-1</em>, <em>stop=-1</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.utils.compute_cat_prob" title="Permalink to this definition">¶</a></dt>
-<dd><p>COMPUTE_CAT_PROB(…) Computes the weighted category probabilities
-based on the models in ‘popex.model’ and weighted by ‘weights’.</p>
+<dd><p><cite>compute_cat_prob</cite> computes the weighted category probabilities.</p>
+<p>The models are obtained from <cite>popex.model</cite> and weighted by <cite>weights</cite>.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>popex</strong> – (PoPEx object) (see ‘popex_objects.PoPEx’)</li>
-<li><strong>weights</strong> – (nmod, ndarray) Relative weights of to the models</li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>popex</strong> (<a class="reference internal" href="#popex.popex_objects.PoPEx" title="popex.popex_objects.PoPEx"><em>PoPEx</em></a>) – PoPEx main structure (cf <cite>popex_objects.PoPEx</cite>)</li>
+<li><strong>weights</strong> (<em>ndarray</em><em>, </em><em>shape=</em><em>(</em><em>nmod</em><em>,</em><em>)</em>) – Relative weights of the models</li>
+<li><strong>start</strong> (<em>int</em>) – <p>Defines the first model to take into account:</p>
+<ul>
+<li>-1: For starting at 0</li>
+<li>N: For starting at <cite>max(N, 0)</cite></li>
+</ul>
+</li>
+<li><strong>stop</strong> (<em>int</em>) – <p>Defines the last model to take into account</p>
+<ul>
+<li>-1: For stopping at <cite>popex.nmod</cite></li>
+<li>N: For stopping at <cite>min(N, popex.nmo)</cite></li>
+</ul>
+</li>
 </ul>
 </td>
 </tr>
-</tbody>
-</table>
-<dl class="docutils">
-<dt>:param start    (int) Defines the first model to take into account</dt>
-<dd><table class="first docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-1</span></kbd></td>
-<td>for first = 0</td></tr>
-</tbody>
-</table>
-<p class="last">N != -1   for first = max(N,0)</p>
-</dd>
-<dt>:param stop     (int) Defines the last model to take into account</dt>
-<dd><table class="first docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-1</span></kbd></td>
-<td>for last = popex.nmod</td></tr>
-</tbody>
-</table>
-<p class="last">N != -1   for last = min(popex.nmod, N)</p>
-</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(m-tuple) An tuple of instances that describes the category
-probabilities for all categorical model types. If a model
-type i is not a subclass of CatMType, the corresponding map
-is set to ‘None’. If a model m is given by
-(CatModel_1, …,CatModel_n) and CatModel_i is
-subdivided into ncat_i categories, then the return value
-is a (CatProb_1, …,CatProb_n) tuple and
-return[i].param_val is a (nparam_i x ncat_i) ndarray.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><p>A tuple of instances that describes the category probabilities for all
+categorical model types.</p>
+<p>If a model type i is not a subclass of <code class="docutils literal notranslate"><span class="pre">CatMType</span></code>, the corresponding
+map is set to <code class="docutils literal notranslate"><span class="pre">None</span></code>. If a model is given by (<cite>CatModel_1</cite>, …,
+<cite>CatModel_n</cite>) and the model values in <cite>CatModel_i</cite> are subdivided into
+<cite>ncat_i</cite> categories, then the return value is a (<cite>CatProb_1</cite>, …,
+<cite>CatProb_n</cite>) tuple where <cite>return[i].param_val</cite> is a <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> with
+<cite>shape=(nparam_i, ncat_i)</cite>.</p>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">m-tuple</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -1427,7 +1422,6 @@ the log-likelihood value will ALWAYS be computed.</li>
         <script type="text/javascript" src="_static/jquery.js"></script>
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
     
 
   

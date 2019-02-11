@@ -1,26 +1,29 @@
-""" 'utils.py' contains the utilities for computing PoPEx samplings and
+""" `utils.py` contains the utilities for computing PoPEx samplings and
 predictions:
 
 Category probabilities and kld maps
-    - compute_cat_prob      Computes probability maps according to categories
-    - update_cat_prob       Updates probability maps according to categories
-    - compute_entropy       Computes entropy of a probability map
-    - compute_kld           Computes kld of two probability maps
+    - :meth:`compute_cat_prob`:   Computes probability maps according to
+      categories
+    - :meth:`update_cat_prob`:    Updates probability maps according to
+      categories
+    - :meth:`compute_entropy`:    Computes entropy of a probability map
+    - :meth:`compute_kld`:        Computes kld of two probability maps
 
 Hard conditioning data
-    - generate_hd           Computes the new hard conditioning data
-    - merge_hd              Merges prior and new hard conditioning data
-    - compute_ncmod         Computes the number of conditioning points per
-                            model type
-    - compute_w_lik         Computes the likelihood weights (used for the hard
-                            conditioning maps)
+    - :meth:`generate_hd`:        Computes the new hard conditioning data
+    - :meth:`merge_hd`:           Merges prior and new hard conditioning data
+    - :meth:`compute_ncmod`:      Computes the number of conditioning points per
+      model type
+    - :meth:`compute_w_lik`:      Computes the likelihood weights (used for the
+      hard conditioning maps)
 
 Generic functions
-    - compute_w_pred        Computes the weights for the predictions
-    - compute_subset_ind    Computes the smallest number of indices that cover
-                            a given percentage of a total weight
-    - write_hd_info         Writes/saves hd information about each model
-    - write_run_info        Appends information about models to run info file
+    - :meth:`compute_w_pred`:     Computes the weights for the predictions
+    - :meth:`compute_subset_ind`: Computes the smallest number of indices that
+      cover a given percentage of a total weight
+    - :meth:`write_hd_info`:      Writes/saves hd information about each model
+    - :meth:`write_run_info`:     Appends information about models to run info
+      file
 """
 
 # -------------------------------------------------------------------------
@@ -51,25 +54,42 @@ from popex.cnsts import NP_MIN_TOL
 
 # Category probabilities and kld maps
 def compute_cat_prob(popex, weights, start=-1, stop=-1):
-    """ COMPUTE_CAT_PROB(...) Computes the weighted category probabilities
-    based on the models in 'popex.model' and weighted by 'weights'.
+    """ `compute_cat_prob` computes the weighted category probabilities.
 
-    :param popex:   (PoPEx object) (see 'popex_objects.PoPEx')
-    :param weights: (nmod, ndarray) Relative weights of to the models
-    :param start    (int) Defines the first model to take into account
-                        -1        for first = 0
-                        N != -1   for first = max(N,0)
-    :param stop     (int) Defines the last model to take into account
-                        -1        for last = popex.nmod
-                        N != -1   for last = min(popex.nmod, N)
-    :return:        (m-tuple) An tuple of instances that describes the category
-                    probabilities for all categorical model types. If a model
-                    type i is not a subclass of CatMType, the corresponding map
-                    is set to 'None'. If a model m is given by
-                    (CatModel_1, ...,CatModel_n) and CatModel_i is
-                    subdivided into ncat_i categories, then the return value
-                    is a (CatProb_1, ...,CatProb_n) tuple and
-                    return[i].param_val is a (nparam_i x ncat_i) ndarray.
+    The models are obtained from `popex.model` and weighted by `weights`.
+
+
+    Parameters
+    ----------
+    popex : PoPEx
+        PoPEx main structure (cf `popex_objects.PoPEx`)
+    weights : ndarray, shape=(nmod,)
+        Relative weights of the models
+    start : int
+        Defines the first model to take into account:
+
+        - -1: For starting at 0
+        - N: For starting at `max(N, 0)`
+    stop : int
+        Defines the last model to take into account
+
+        - -1: For stopping at `popex.nmod`
+        - N: For stopping at `min(N, popex.nmo)`
+
+
+    Returns
+    -------
+    m-tuple
+        A tuple of instances that describes the category probabilities for all
+        categorical model types.
+
+        If a model type i is not a subclass of ``CatMType``, the corresponding
+        map is set to ``None``. If a model is given by (`CatModel_1`, ...,
+        `CatModel_n`) and the model values in `CatModel_i` are subdivided into
+        `ncat_i` categories, then the return value is a (`CatProb_1`, ...,
+        `CatProb_n`) tuple where `return[i].param_val` is a ``ndarray`` with
+        `shape=(nparam_i, ncat_i)`.
+
     """
     nmtype = popex.nmtype
 

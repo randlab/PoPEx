@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-""" 'algorithm.py' contains the main implementation of the parallel (multiple-
+""" `algorithm.py` contains the main implementation of the parallel (multiple-
 chain) PoPEx algorithm. Mainly this concerns the two functions
 
-    - `run_popex_mp`
-    - `pred_popex_mp`
+    - :meth:`run_popex_mp`: Main implementation for PoPEx runs
+    - :meth:`pred_popex_mp`: Main implementation for PoPEx predictions
 
 that are used to sample models and predict results. A common file structure for
 a PoPEx run together with some predictions is the following:
@@ -83,7 +83,7 @@ def run_popex_mp(pb, path_res, path_q_cat,
     true probability values according to the true distribution. They should
     only be used in combination (as ratio r):
 
-            r = prior / generation.
+            `r = prior / generation`.
 
     This ratio is important in the importance sampling framework where we want
     to compute weighted expectation values according to a set of generated
@@ -109,16 +109,17 @@ def run_popex_mp(pb, path_res, path_q_cat,
     upd_hdmap_freq : int
         Defines the frequency for updating the HD maps (`kld` and `p_cat`)
     upd_ls_freq : int
-         Defines the frequency for updating the learning scheme (-1: for no
+         Defines the frequency for updating the learning scheme (-1 for no
          update)
     si_freq : int
-         Defines the frequency of saving intermediate states (-1: for no
+         Defines the frequency of saving intermediate states (-1 for no
          intermediate saves)
 
 
     Returns
     -------
     None
+
     """
 
     # Initialization
@@ -320,6 +321,7 @@ def _run_process(pb, popex, imod,
         Log-prior probability of the model
     log_p_gen : float
         Log-sampling probability of the model
+
     """
 
     np.random.seed(pb.seed + imod)
@@ -393,6 +395,7 @@ def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
     Returns
     -------
     None
+
     """
 
     # Generic constants
@@ -493,6 +496,7 @@ def pred_popex_mp(pred, path_res, nmp=1):
     Returns
     -------
     None
+
     """
     # Start PoPEx predictions
     tst_pred = time.time()
