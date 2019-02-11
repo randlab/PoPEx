@@ -144,17 +144,34 @@ def compute_cat_prob(popex, weights, start=-1, stop=-1):
 
 
 def update_cat_prob(p_cat, m_new, w_new, sum_w_old):
-    """ UPDATE_CAT_PROB(...) updates the category probabilities based on an
-    earlier computation (f.e. by 'compute_cat_prob'). The probability maps are
-    changed in place.
+    """ `update_cat_prob` updates (in place) the category probabilities.
 
-    :param p_cat:       (m-tuple) Tuple of categorical probability maps
-                        (see output of 'compute_cat_prob')
-    :param m_new:       (list) List of m-tuples of 'MType' instances
-    :param w_new:       (nmod, ndarray) Weights associated to the new models
-    :param sum_w_old:   (float) Old weight normalization constant
-    :return: None
+    If `p_cat_old` represents the old category probability maps, then we have
+
+        `p_cat_new = (sum_w_old*p_cat_old * \sum_i w_new_i*1(m_new_i))
+                     / (sum_w_old + sum(w_new))`
+
+     where 1(m_new_i) is the categorical indicator of the model i.
+
+    Parameters
+    ----------
+    p_cat : m-tuple
+        Tuple of categorical probability maps (cf. :meth:`compute_cat_prob`)
+    m_new : list
+        List of m-tuples defining a set of `nmod` models
+    w_new : ndarray, shape=(nmod,)
+        Weights associated to the new models
+    sum_w_old : float
+        Old weight normalization constant
+
+
+    Returns
+    -------
+    None
+
     """
+
+    # Check input types
     if not isinstance(m_new, list):
         raise ValueError(msg.err1011)
     if not isinstance(w_new, np.ndarray):
@@ -162,6 +179,7 @@ def update_cat_prob(p_cat, m_new, w_new, sum_w_old):
     elif not len(m_new) == w_new.size:
         raise ValueError(msg.err1013)
 
+    # Check positivity of weights
     if any(w < 0 for w in w_new):
         raise ValueError(msg.err1001)
 
