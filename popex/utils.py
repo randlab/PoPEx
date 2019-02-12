@@ -1,4 +1,4 @@
-""" `utils.py` contains the utilities for computing PoPEx samplings and
+""" `utils.py` contains utilities for performing a PoPEx sampling and computing
 predictions:
 
 Category probabilities and kld maps
@@ -58,7 +58,6 @@ def compute_cat_prob(popex, weights, start=-1, stop=-1):
 
     The models are obtained from `popex.model` and weighted by `weights`.
 
-
     Parameters
     ----------
     popex : PoPEx
@@ -76,7 +75,6 @@ def compute_cat_prob(popex, weights, start=-1, stop=-1):
         - -1: For stopping at `popex.nmod`
         - N: For stopping at `min(N, popex.nmo)`
 
-
     Returns
     -------
     m-tuple
@@ -85,9 +83,9 @@ def compute_cat_prob(popex, weights, start=-1, stop=-1):
 
         If a model type i is not a subclass of ``CatMType``, the corresponding
         map is set to ``None``. If a model is given by (`CatModel_1`, ...,
-        `CatModel_n`) and the model values in `CatModel_i` are subdivided into
+        `CatModel_m`) and the model values in `CatModel_i` are subdivided into
         `ncat_i` categories, then the return value is a (`CatProb_1`, ...,
-        `CatProb_n`) tuple where `return[i].param_val` is a ``ndarray`` with
+        `CatProb_m`) tuple where `return[i].param_val` is a ``ndarray`` with
         `shape=(nparam_i, ncat_i)`.
 
     """
@@ -148,10 +146,11 @@ def update_cat_prob(p_cat, m_new, w_new, sum_w_old):
 
     If `p_cat_old` represents the old category probability maps, then we have
 
-        `p_cat_new = (sum_w_old*p_cat_old * \sum_i w_new_i*1(m_new_i))
-                     / (sum_w_old + sum(w_new))`
+        `p_cat_new = [sum_w_old*p_cat_old + \sum_i w_new_i*1(m_new_i)]
+        / [sum_w_old + sum(w_new)]`
 
-     where 1(m_new_i) is the categorical indicator of the model i.
+    where `1(m_new_i)` is the categorical indicator of the model `i`.
+
 
     Parameters
     ----------
@@ -303,6 +302,7 @@ def compute_kld(p_cat, q_cat):
     -------
     m-tuple
         Tuple of kld maps
+
         `return[i]` : ``None`` or ``ContParam``
             Return value `i` is ``None`` if `p_cat[i]`` is ``None``, otherwise
             it is an instance of ``ContParam``
@@ -366,27 +366,29 @@ def generate_hd(popex, meth_w_hd, ncmod, kld, p_cat, q_cat):
 
     Notes
     -----
-    There are two important thins to note:
+    There are two important things to note:
 
         (1) The two objects `hd_prior` and `hd_generation` are the corresponding
-        prior and weighted probability values of the hard conditioning CATEGORY
-        that corresponds to the values in `hd_param_val`. Therefore, if they are
-        used in the computation of the sampling weight ratio, one uses CATEGORY
-        probabilities and NOT value probabilities.
+            prior and weighted probability values of the hard conditioning
+            CATEGORY that corresponds to the values in `hd_param_val`.
+            Therefore, if they are used in the computation of the sampling
+            weight ratio, one uses CATEGORY probabilities and NOT value
+            probabilities.
 
         (2) Numerical imperfections (for example in the computation of 'q_cat')
-        can cause locations where `p_cat > 0` but `q_cat = 0`. In the
-        computation of the Kullback-Leibler divergence we did put corresponding
-        `kld` values to `0` (by enforcing `q_i(x) = p_i(x)`) and therefore it is
-        impossible to sample and condition such locations.
+            can cause locations where `p_cat > 0` but `q_cat = 0`. In the
+            computation of the Kullback-Leibler divergence we did put
+            corresponding `kld` values to `0` (by enforcing `q_i(x) = p_i(x)`)
+            and therefore it is impossible to sample and condition such
+            locations.
 
 
     Parameters
     ----------
     popex : PoPEx
-        PoPEx main structure (cf `popex_objects.PoPEx`)
+        PoPEx main structure
     meth_w_hd : dict
-        Method to compute hard conditioning weights (cf. `utils.compute_w_lik`)
+        Method to compute hard conditioning weights (cf. :meth:`compute_w_lik`)
     ncmod : m-tuple
         Number of conditioning points per model type
     kld : m-tuple
@@ -404,7 +406,6 @@ def generate_hd(popex, meth_w_hd, ncmod, kld, p_cat, q_cat):
 
     Returns
     -------
-    tuple) (hd_ind, hd_val, hd_pri, hd_gen)
     hd_param_ind : m-tuple
         Tuple of hard conditioning indices where hard conditioning values are
         imposed. If there is no hard conditioning for a model type `i`, then
@@ -532,17 +533,31 @@ def generate_hd(popex, meth_w_hd, ncmod, kld, p_cat, q_cat):
 
 
 def merge_hd(hd_param_ind_1, hd_param_ind_2, hd_param_val_1, hd_param_val_2):
-    """ This function is used for merging two sets of hard conditioning data.
-    It is assumed that hd_param_ind_i[imtype] is 'None' if and only if
-    hd_param_val_i[imtype] is 'None'.
+    """ `merge_hd` used for merging two sets of hard conditioning data.
 
-    :param hd_param_ind_1:  (m-tuple) First set of hard conditioning indices
-    :param hd_param_ind_2:  (m-tuple) Second set of hard conditioning indices
-    :param hd_param_val_1:  (m-tuple) First set of hard conditioning values
-    :param hd_param_val_2:  (m-tuple) Second set of hard conditioning values
-    :return:                (tuple) (hd_ind, hd_par)
-        return[0]           (m-tuple) Merged set of hard conditioning indices
-        return[1]           (m-tuple) Merged set of hard conditioning values.
+    It is assumed that `hd_param_ind_i[imtype]` is ``None`` if and only if
+    `hd_param_val_i[imtype]` is ``None``.
+
+
+    Parameters
+    ----------
+    hd_param_ind_1 : m-tuple
+        First set of hard conditioning indices
+    hd_param_ind_2 : m-tuple
+        Second set of hard conditioning indices
+    hd_param_val_1 : m-tuple
+        First set of hard conditioning values
+    hd_param_val_2 : m-tuple
+        Second set of hard conditioning values
+
+
+    Returns
+    -------
+    hd_ind : m-tuple
+        Merged set of hard conditioning indices
+    hd_par : m-tuple
+        Merged set of hard conditioning values
+
     """
     nmtype = len(hd_param_ind_1)
 
@@ -570,16 +585,34 @@ def merge_hd(hd_param_ind_1, hd_param_ind_2, hd_param_val_1, hd_param_val_2):
 
 
 def compute_ncmod(popex, meth_w_hd=None):
-    """ COMPUTE_NCMOD(...) For each model type, this function computes the
-    number of conditioning points by sampling from an uniform random variable
-    ~U(0, popex.ncmax[imtype]).
+    """ `compute_ncmod` computes, for each model type, the number of
+    conditioning points.
 
-    Note that 'ncmod' is set to zero for each model type, if the total sum of
-    the likelihood values in 'popex.p_lik' is zero.
 
-    :param popex:       (PoPEx) (see 'popex_objects.PoPEx')
-    :param meth_w_hd:   (dict) (see 'utils.compute_w_lik')
-    :return:            (m-tuple) Number of conditioning points
+    It is assumed that the number of hard data is restricted model type-wise.
+    Therefore, the number of conditioning points is also computed model
+    type-wise by sampling from an uniform random variable
+    `~U(0, popex.ncmax[imtype])`.
+
+
+    Notes
+    -----
+    Note that if the total sum of the likelihood values in `popex.p_lik` is
+    zero, `ncmod` is set to zero for each model type.
+
+
+    Parameters
+    ----------
+    popex : PoPEx
+        PoPEx main structure
+    meth_w_hd : dict
+        Method to compute hard conditioning weights (cf. :meth:`compute_w_lik`)
+
+
+    Returns
+    -------
+    m-tuple
+        Number of conditioning points per model type
     """
 
     # Weights according to 'hd_meth'
@@ -596,27 +629,62 @@ def compute_ncmod(popex, meth_w_hd=None):
 
 
 def compute_w_lik(popex, meth=None):
-    """ COMPUTE_W(...) computes the quantity of the weights that correspond to
-    the likelihood. This means that if the weight of a given model m is
+    """ `compute_w_lik` returns the set of normalized likelihood values.
 
-            w(m) = L(m) * rho(m) / phi_k(m),
+    In practice, when the likelihood values must be represented by a floating
+    point number, it might be advantageous to compute approximations of `L(m)`.
 
-    it might be advantageous to use an approximation of L(m).
+    There are several approximation possibilities that are implemented in this
+    version (specified in `meth`):
 
-    There are several possibilities that can be chosen through the dict in
-    'meth'. This dict must contain at least the key 'name' with possible
-    value:
+        (a) No approximation (`meth={'name': 'exact'}` or `meth=None`):
 
-            'exact':        L(m) = exp( 'log_p_lik' )
-            'exp_sqrt_log': L(m) ~ exp( -sqrt(-'log_p_lik' )
-            'exp_pow_log':  L(m) ~ exp( - (-'log_p_lik')^k )
-                            (where k = meth['pow'])
-            'inv_log':      L(m) ~ 1 / ( 1-'log_p_lik' )
-            'inv_sqrt_log': L(m) ~ 1 / ( 1+sqrt(-'log_p_lik') ).
+            `L(m) = exp( 'log_p_lik' )`
 
-    :param popex:       (PoPEx) (see 'popex_objects.PoPEx')
-    :param meth:        (string) Defines the method to be used
-    :return:            (nmod, ndarray) Array of NORMALIZED weights
+        (b) Sqrt-unskewed (`meth={'name': 'exp_sqrt_log'}`)
+
+            `L(m) ~ exp( -sqrt(-'log_p_lik' )`
+
+        (c) K-unskewed (`meth={'name': 'exp_sqrt_log', 'pow': k}`)
+
+            `L(m) ~ exp( - (-'log_p_lik')^k )`
+
+        (d) Inverse log (`meth={'name': 'inv_log'}`)
+
+            `L(m) ~ 1 / ( 1-'log_p_lik' )`
+
+        (e) Inverse sqrt-log (`meth={'name': 'inv_sqrt_log'}`)
+
+            `L(m) ~ 1 / ( 1+sqrt(-'log_p_lik') )`.
+
+    As mentioned above, these techniques aim to unskew the likelihood values.
+
+
+    Notes
+    -----
+    This function is used in two different locations (with possibly two
+    different approximation techniques): for the learning
+    scheme in the PoPEx sampling and for computing predictions. While in first
+    case any approximation technique can be used, the latter choice might bias
+    the computation weights.
+
+
+    Parameters
+    ----------
+    popex : PoPEx
+        PoPEx main structure
+    meth : dict
+        Defines the approximation method to be used. Fields are
+
+            - ``'name'`` : Name of the method (`str`)
+            - ``'pow'`` : Power for method (c) (`float`)
+
+
+    Returns
+    -------
+    ndarray, shape=(nmod,)
+        Array of normalized weights
+
     """
 
     log_w_lik = np.array(popex.log_p_lik)
@@ -713,21 +781,40 @@ def compute_w_lik(popex, meth=None):
 
 # Generic functions
 def compute_w_pred(popex, nw_min=0, ibnd=-1, meth=None):
-    """ COMPUTE_W_PRED(...) computes the predictive weights from a PoPEx
-    sampling, such that
+    """ `compute_w_pred` returns the set of normalized predictive weights.
 
-        ne(w_pred) = nw_min + ne(w)
+    For assuring a minimum number of effective weights, they are computed such
+    that
 
-    where w contains the weights associated to the models and 'ne(w)' denotes
+        `ne(w_pred) = min(nw_min, ne(w))`
+
+    where `w` contains the weights associated to the models and `ne(w)` denotes
     the number of effective weights. This quantity can be modified by replacing
-    w with w^\alpha, where alpha > 0. A 1-d optimisation problem is used to
-    compute the optimal \alpha value.
+    `w` with `w^\alpha`, where `alpha > 0`. A `1-d` optimisation problem is used
+    to compute the optimal `\alpha` value.
 
-    :param popex:       (PoPEx) (see 'popex_objects.PoPEx')
-    :param nw_min:      (int) Mininum number of effective weights (= l_0)
-    :param ibnd:        (int) Length of the weight array
-    :param meth:        (dict) (see 'utils.compute_w_lik')
-    :return:            (nmod, ndarray) Array of predictive weights
+
+    Parameters
+    ----------
+    popex : PoPEx
+        PoPEx main structure
+    nw_min : int
+        Mininum number of effective weights `(= l_0)`
+    ibnd : int
+        Length of the weight array
+    meth : dict
+        Defines the approximation method to be used (cf. :meth:`compute_w_lik`).
+        Fields are
+
+            - ``'name'`` : Name of the method (`str`)
+            - ``'pow'`` : Power for method (c) (`float`)
+
+
+    Returns
+    -------
+    ndarray, shape=(nmod,)
+        Array of predictive weights
+
     """
 
     # Compute weight array
@@ -751,16 +838,30 @@ def compute_w_pred(popex, nw_min=0, ibnd=-1, meth=None):
 
 
 def compute_subset_ind(p_frac, weights):
-    """ COMPUTE_SUBSET_IND(...) computes the smallest index set such that
+    """ `compute_subset_ind` computes the smallest index set that covers a given
+    percentage.
 
-        np.sum(weights[ind]) >= p_frac * np.sum(weights),
+    This means that the subset indices `ind` are such that
 
-    i.e. 'weights[ind]' covers at least a fraction of 'p_frac' of the total
-    importance in 'weights'.
+        `np.sum(weights[ind]) >= p_frac * np.sum(weights)`,
 
-    :param p_frac:      (float) Coverage fraction in (0, 1]
-    :param weights:     (nw, ndarray) Non-negative weights
-    :return:            (list) Subset of indices
+    or in other words `weights[ind]` covers at least a fraction of `p_frac` of
+    the total some of `weights`.
+
+
+    Parameters
+    ----------
+    p_frac : float
+        Coverage fraction in `(0, 1]`
+    weights : ndarray, shape=(nw,)
+        Non-negative weights
+
+
+    Returns
+    -------
+    list
+        Subset of indices
+
     """
     # Compute cumsum with largest weights first
     w_sorted = np.sort(weights)[::-1]
@@ -773,18 +874,31 @@ def compute_subset_ind(p_frac, weights):
 
 
 def write_hd_info(popex, imod, hd_param_ind, hd_param_val):
-    """ WRITE_HD_INFO(...) writes the hard conditioning that has been deduced
-    for creating a specific model at
-    'popex.path_res'. The file structure is the following:
-        <popex.path_res>$
-            |-> hd
-                -> hd_modXXXXXX.txt
+    """ `write_hd_info` writes the hard conditioning that has been deduced
+    for creating a specific model to a text file.
 
-    :param popex:           (PoPEx) (see 'popex_objects.PoPEx')
-    :param imod:            (int) Model index
-    :param hd_param_ind:    (m-tuple) Hard conditioning indices
-    :param hd_param_val:    (m-tuple) Hard conditioning values
-    :return: None
+    | The text file is saved at `popex.path_res` with the following structure:
+    |   <popex.path_res>$
+    |       └-- hd
+    |           └-- hd_modXXXXXX.txt
+
+
+    Parameters
+    ----------
+    popex : PoPEx
+        PoPEx main structure
+    imod : int
+        Model index
+    hd_param_ind : m-tuple
+        Hard conditioning indices
+    hd_param_val : m-tuple
+        Hard conditioning values
+
+
+    Returns
+    -------
+    None
+
     """
     # Path of the result location
     path_res = popex.path_res
@@ -821,20 +935,38 @@ def write_hd_info(popex, imod, hd_param_ind, hd_param_val):
 
 def write_run_info(pb, popex, imod, log_p_lik, cmp_log_p_lik,
                    log_p_pri, log_p_gen, ncmod):
-    """ WRITE_RUN_INFO(...) writes some algorithm specific information at
-    'popex.path_res'. The file structure that is the following:
-        <popex.path_res>$
-            -> run_info.txt
+    """ `write_run_info` writes some algorithm specific information to a text
+    file.
 
-    :param pb:              (Problem) (see 'popex_objects.Problem')
-    :param popex:           (PoPEx) (see 'popex_objects.PoPEx')
-    :param imod:            (int) Model index
-    :param log_p_lik:       (float) Log-likelihood value
-    :param cmp_log_p_lik    (bool) Indicates if likelihood has been computed
-    :param log_p_pri:       (float) Prior log-probability
-    :param log_p_gen:       (float) Sampling log-probability
-    :param ncmod            (m-tuple) Number of conditioning points
-    :return: None
+    | The text file is save at `popex.path_res` with the following structure:
+    |   <popex.path_res>$
+    |       └-- run_info.txt
+
+
+    Parameters
+    ----------
+    pb : Problem
+        Defines the problem functions and parameters
+    popex : PoPEx
+        PoPEx main structure
+    imod : int
+        Model index
+    log_p_lik : float
+        Log-likelihood value of the model
+    cmp_log_p_lik : bool
+        Indicates if likelihood has been computed (True) or predicted (False)
+    log_p_pri : float
+        Prior log-probability of the model
+    log_p_gen : float
+        Sampling log-probability of the model
+    ncmod : m-tuple
+        Model type specific number of conditioning points used
+
+
+    Returns
+    -------
+    None
+
     """
     # Path of the result location
     path_res = popex.path_res

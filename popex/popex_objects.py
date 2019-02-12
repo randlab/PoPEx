@@ -1,32 +1,37 @@
-""" 'popex_objects.py' contains the PoPEx-specific class definitions:
+""" 'popex_objects.py' contains the PoPEx-specific class definitions.
 
 Main structure
-    - 'PoPEx':      Main class for any PoPEx simulation. It contains the model
-                    chain and any corresponding probability measures.
+    - :class:`PoPEx`: Main class for any PoPEx simulation. It contains the
+      model chain and any corresponding probability measures.
 
-Problem definitions
-    - 'Problem':    Defines the problem parameters and functions
-    - 'Learning':   Learning scheme for predicting if it is worth to compute
-                    the likelihood
-    - 'Prediction': Defines the prediction parameters and functions
+Sampling definitions
+    - :class:`Problem`: Defines the sampling parameters and functions
+    - :class:`Learning`: Learning scheme for learning the likelihood values
+    - :class:`Prediction`: Defines the prediction parameters and functions
 
 Classes associated to a model type
-    - 'MType':      (abstract) Parent class for each map associated to a model
-                    type
-    - 'CatMType'    (abstract, inherits from MType) Parent class for each map
-                    that is associated to categories
-    - 'CatProb':    (inherits from CatMType) CatProb is a class that is used
-                    for probability distributions over categories
-    - 'CatParam':   (inherits from CatMType) CatModel is a class that is used
-                    for categorized parameter values
+    - :class:`MType`: (`abstract`) Parent class for each map associated to a
+      model type
+    - :class:`ContMType`: (inherits from :class:`MType`) Class for each map that
+      is associated to the model types but not to categories (e.g.
+      `kld[imtype]`, `entropy[imtype]`)
+    - :class:`CatMType`: (`abstract`, inherits from :class:`MType`) Parent class
+      for each map that is associated to categories
+    - :class:`CatProb`: (inherits from :class:`CatMType`) This class is used for
+      the representation of probability distributions over categories
+      (e.g. `p_cat[imtype]`, `q_cat[imtype]`)
+    - :class:`CatParam`: (inherits from :class:`CatMType`) This class is used
+      for the representation of categorized parameter values (e.g.
+      `model[j][imtype]`)
+
 """
 
 # -------------------------------------------------------------------------
 #   Authors: Christoph Jaeggli, Julien Straubhaar and Philippe Renard
-#   Year: 2018
+#   Year: 2019
 #   Institut: University of Neuchatel
 #
-#   Copyright (c) 2018 Christoph Jaeggli
+#   Copyright (c) 2019 Christoph Jaeggli
 #
 #   This program is distributed in the hope that it will be useful, but
 #   WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -45,33 +50,41 @@ import popex.popex_messages as msg
 
 # Main structure
 class PoPEx:
-    """ This class is the main object for the PoPEx algorithm. It contains all
+    """ Main class for any PoPEx simulation.
+
+    This class is the main object for the PoPEx algorithm. It contains all
     the models, likelihood, log-prior and log-generation information of a PoPEx
-    run. The measure values are not necessarily normalized.
+    run.
 
-    INSTANCE ATTRIBUTES
-    model:          (list) List of models
-        model[i]        (m-tuple) Tuple of 'MType' instances
-    log_p_lik:      (nmod, ndarray) Natural logarithm of likelihood measure
-    cmp_log_p_lik:  (nmod, ndarray) Boolean indicator whether the
-                    log-likelihood value has been computed (True) or predicted
-                    (False)
-    log_p_pri:      (nmod, ndarray) Natural logarithm of prior measure value
-    log_p_gen:      (nmod, ndarray) Natural logarithm of sampling measure value
-    ncmax:          (tuple) Maximum number of conditioning points for each
-                    model type
-    nc:             (list) List of m-tuples
-        nc[i]           (tuple) m-tuple containing the number of conditioning
-                        points imposed in model[i]
-    nmtype:         (int) Number of model types
-    path_res:       (str) Path of the results
+    Parameters
+    ----------
+    model : list
+        List of models
 
-    INSTANCE PROPERTIES
-    nmod:           (int) Number of models
+        model[j] : m-tuple
+            Tuple of ``MType`` instances
+    log_p_lik : ndarray, shape=(nmod,)
+        Natural logarithm of likelihood measure
+    cmp_log_p_lik : ndarray, shape=(nmod,)
+        Boolean indicator whether the log-likelihood value has been computed
+        (True) or predicted (False)
+    log_p_pri : ndarray, shape=(nmod,)
+        Natural logarithm of prior measure value
+    log_p_gen : ndarray, shape=(nmod,)
+        Natural logarithm of sampling measure value
+    ncmax : m-tuple
+        Maximum number of conditioning points for each model type
+    nc : list
+        List of m-tuples
 
-    INSTANCE METHODS
-    insert_model(...)   Insert a new model to the PoPEx instance at a given
-                        location
+        nc[j] : m-tuple
+            Contains the number of conditioning used conditioning points in the
+            generation of `model[j]`
+    nmtype : int
+        Number of model types
+    path_res : str
+        Path of the results
+
     """
 
     def __init__(self,
@@ -137,20 +150,34 @@ class PoPEx:
 
     def add_model(self, imod, model, log_p_lik, cmp_log_p_lik,
                   log_p_pri, log_p_gen, ncmod):
-        """ Appends a new model at the ond of the PoPEx.model list and
-        correspondingly updates the probability value arrays.
+        """ Appends a new model at the end of the model list and updates the
+        measure arrays.
 
-        :param imod:            (int) Simulation index
-        :param model:           (m-tuple) Tuple of 'MType' instances defining
-                                a new model
-        :param log_p_lik:       (float) Log-likelihood value of model
-        :param cmp_log_p_lik:   (bool) Indicates if the log-likelihood has been
-                                computed (True) or predicted (False)
-        :param log_p_pri:       (float) Log-prior value of model
-        :param log_p_gen:       (float) Log-generation value of model
-        :param ncmod:           (tuple) m-tuple defining the number of
-                                conditioning points
-        :return: None
+
+        Parameters
+        ----------
+        imod : int
+            Model index
+        model : m-tuple
+            Tuple of ``MType`` instances defining a new model
+        log_p_lik : float
+            Log-likelihood value of model
+        cmp_log_p_lik : bool
+            Indicates if the log-likelihood has been computed (True) or
+            predicted (False)
+        log_p_pri : float
+            Log-prior value of model
+        log_p_gen : float
+            Log-generation value of model
+        ncmod : m-tuple
+            Defines the number of conditioning points that have been used in the
+            generation of the model
+
+
+        Returns
+        -------
+        None
+
         """
         # Pickle the model to save memory
         path_mod = 'model/mod{:06d}.mod'.format(imod)
@@ -167,21 +194,35 @@ class PoPEx:
 
     def insert_model(self, loc, imod, model, log_p_lik, cmp_log_p_lik,
                      log_p_pri, log_p_gen, ncmod):
-        """ Inserts a new model at 'loc' of the PoPEx.model list and
-        correspondingly updates the probability arrays.
+        """ Inserts a new model at `loc` of the model list and  updates the
+        measure arrays.
 
-        :param loc:             (int) Location of the insertion
-        :param imod:            (int) Model index
-        :param model:           (m-tuple) Tuple of 'MType' instances defining
-                                new model
-        :param log_p_lik:       (float) Log-likelihood value of model
-        :param cmp_log_p_lik:   (bool) Indicates if the log-likelihood has been
-                                computed (True) or predicted (False)
-        :param log_p_pri:       (float) Log-prior value of model
-        :param log_p_gen:       (float) Log-generation value of model
-        :param ncmod:           (tuple) m-tuple defining the number of
-                                conditioning points
-        :return: None
+
+        Parameters
+        ----------
+        loc :  int
+            Location of the insertion
+        imod : int
+            Model index
+        model : m-tuple
+            Tuple of ``MType`` instances defining a model
+        log_p_lik : float
+            Log-likelihood value of model
+        cmp_log_p_lik : bool
+            Indicates if the log-likelihood has been computed (True) or
+            predicted (False)
+        log_p_pri : float
+            Log-prior value of model
+        log_p_gen : float
+            Log-generation value of model
+        ncmod : m-tuple)
+            Defines the number of conditioning points that have been used in the
+            generation of the model
+
+
+        Returns
+        -------
+        None
         """
         # Pickle the model to save memory
         path_mod = 'model/mod{:06d}.mod'.format(imod)
@@ -200,7 +241,10 @@ class PoPEx:
     def nmod(self):
         """ Number of models
 
-        :return:            (int) Number of models in 'self.model'.
+        Returns
+        -------
+        int
+            Number of models in `model`
         """
         return len(self.model)
 

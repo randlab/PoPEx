@@ -93,8 +93,7 @@ def run_popex_mp(pb, path_res, path_q_cat,
     Parameters
     ----------
     pb : Problem
-        Defines the problem functions and parameters (see
-        'popex_objects.Problem' for more information)
+        Defines the problem functions and parameters
     path_res : str
         Path to the 'results' folder
     path_q_cat : str
@@ -288,17 +287,17 @@ def _run_process(pb, popex, imod,
     Parameters
     ----------
     pb : Problem
-        Problem definition (cf `popex_objects.Problem`)
+        Problem definition
     popex : PoPEx
-        PoPEx main structure (cf `popex_objects.PoPEx`)
+        PoPEx main structure
     imod : int
         Model index
     hd_prior_param_ind : m-tuple
-        Prior hard conditioning indices (cf. `pb.get_hd_pri`)
+        Prior hard conditioning indices (cf. :meth:`pb.get_hd_pri`)
     hd_prior_param_val : m-tuple
-        Prior hard conditioning values (cf. `pb.get_hd_pri`)
+        Prior hard conditioning values (cf. :meth:`pb.get_hd_pri`)
     kld : m-tuple
-        Kullback-Leibler divergence map (cf. 'pb.compute_kld')
+        Kullback-Leibler divergence map (cf. :meth:`pb.compute_kld`)
     p_cat : m-tuple
         Weighted category probabilities
     q_cat : m-tuple
@@ -381,9 +380,9 @@ def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
     Parameters
     ----------
     pb : Problem
-        Problem definition (cf `popex_objects.Problem`)
+        Problem definition
     popex : PoPEx
-        PoPEx main structure (cf `popex_objects.PoPEx`)
+        PoPEx main structure
     nmax : int
         Number of maximal models
     t_popex : float
@@ -485,8 +484,7 @@ def pred_popex_mp(pred, path_res, nmp=1):
     Parameters
     ----------
     pred : Prediction
-        Defines the prediction functions and parameters (cf.
-        `popex_objects.Prediction` for more information)
+        Defines the prediction functions and parameters
     path_res : str
         Path for loading the PoPEx results
     nmp : int
@@ -569,10 +567,9 @@ def _pred_process(pred, popex, imod):
     Parameters
     ----------
     pred : Prediction
-        Defines the prediction functions and parameters (cf
-        `popex_objects.Prediction` for more information)
+        Defines the prediction functions and parameters
     popex : PoPEx
-        PoPEx main structure (cf `popex_objects.PoPEx`)
+        PoPEx main structure
     imod : int
         Model index
 

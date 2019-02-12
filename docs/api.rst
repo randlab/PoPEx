@@ -5,8 +5,8 @@ The API Documentation of the package
 
 :mod:`popex`
 
-PoPEx algorithm
----------------
+Algorithm
+---------
 
 .. automodule:: popex.algorithm
    :members:
@@ -19,8 +19,8 @@ Utilities
    :members:
 
 
-Class Definitions
------------------
+Classes
+-------
 
 .. automodule:: popex.popex_objects
    :members:
