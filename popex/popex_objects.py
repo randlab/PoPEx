@@ -223,6 +223,7 @@ class PoPEx:
         Returns
         -------
         None
+
         """
         # Pickle the model to save memory
         path_mod = 'model/mod{:06d}.mod'.format(imod)
@@ -245,46 +246,63 @@ class PoPEx:
         -------
         int
             Number of models in `model`
+
         """
         return len(self.model)
 
 
 # Problem definitions
 class Problem:
-    """ Defines the problem that should be addressed by the PoPEx method. The
-    user must provide function definitions for 'generate_m' and
-    'compute_log_p_lik'. Optionally, a learning scheme can be defined in
-    'learning_scheme'.
+    """ Defines the sampling problem that should be addressed by the PoPEx
+    method.
 
-    Optionally
+    The user must provide function definitions for `generate_m` and
+    `compute_log_p_lik`. For the definition of the model space, we can also
+    provide 'prior hard conditioning' through the function `get_hd_pri`.
+    Optionally, a likelihood learning scheme can be defined in
+    `learning_scheme`. Furthermore, one also must define how to compute the
+    ratio in the importance sampling weights. For this, the functions
+    `compute_log_p_pri` and `compute_log_p_gen` can also be defined manually. If
+    they are left empty, the default version that only considers the hard
+    conditioning data points is used.
 
-    INSTANCE ATTRIBUTES
-    generate_m          (callable) Generates a new model m
-    compute_log_p_lik   (callable) Computes the natural logarithm of the
-                        likelihood of m
-    get_hd_pri          (callable) Assembles the 'prior hard conditioning'
 
-    ------------------------------ (optional) ---------------------------------
-    compute_log_p_pri   (callable) Computes quantity for the ratio
-                        corresponding to the log-prior probability of m
-    compute_log_p_gen   (callable) Computes the quantity of the ratio
-                        corresponding to the log-generation probability of m
-            (for more details about the callable instance variables see
-            'INSTANCE ATTRIBUTE DETAILS AND RECOMMENDATIONS' below)
-    learning_scheme     (Learning) Learning scheme for log_p_lik
-    ---------------------------------------------------------------------------
-    meth_w_hd:          (dict) Defines the method used in the
-                        computation of the hard conditioning points (HD)
-                        (see 'utils.compute_w_lik')
-    nmtype              (int) Number of model types
-    seed                (int) Initial seed
+    Parameters
+    ----------
+    generate_m : function
+        Generates a new model m from a set of hard conditioning data.
+    compute_log_p_lik : function
+        Computes the natural logarithm of the likelihood of m
+    get_hd_pri : function
+        Provides the 'prior hard conditioning' that is used in the definition of
+        the model space
+    compute_log_p_pri : function, optional
+        Computes quantity for the ratio corresponding to the log-prior
+        probability of m
+    compute_log_p_gen : function, optional
+        Computes the quantity of the ratio corresponding to the log-generation
+        probability of m
+    learning_scheme : Learning, optional
+        Learning scheme for log_p_lik
+    meth_w_hd : dict, optional
+        Defines the method for computing the learning weights that are used in
+        the computation of the hard conditioning points (cf.
+        :meth:`compute_w_lik`)
+    nmtype : int
+        Number of model types
+    seed : int
+        Initial seed
 
-    INSTANCE ATTRIBUTE DETAILS AND RECOMMENDATIONS
-    (1) generate_m(hd_param_ind, hd_param_val, imod)
-    ------------------------------------------------
-        This function generates a model instance m_k being a m-tuple such that
 
-                m_k = (CatParam_k1, ..., CatParam_km).
+    Notes
+    -----
+    The parameters of type ``function`` have themself parameter and return
+    values and must be defined as follows
+
+    (1) `generate_m(hd_param_ind, hd_param_val, imod)`
+        This function generates a model instance `m` being an m-tuple such that
+
+                `m = (CatParam_1, ..., CatParam_m)`.
 
 
         param: hd_param_ind:    (m-tuple) For each instance in the model tuple,
