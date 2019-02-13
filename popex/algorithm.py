@@ -83,7 +83,7 @@ def run_popex_mp(pb, path_res, path_q_cat,
     true probability values according to the true distribution. They should
     only be used in combination (as ratio r):
 
-            `r = prior / generation`.
+            `ratio(m) = rho(m) / phi(m)`.
 
     This ratio is important in the importance sampling framework where we want
     to compute weighted expectation values according to a set of generated

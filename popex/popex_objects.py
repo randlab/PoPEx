@@ -271,19 +271,104 @@ class Problem:
     ----------
     generate_m : function
         Generates a new model m from a set of hard conditioning data.
+
+        `generate_m(hd_param_ind, hd_param_val, imod)`
+
+        Parameters:
+            - hd_param_ind : m-tuple
+                For each instance in the model tuple, this variable defines the
+                hard conditioning INDICES (where to apply HD). `hd_param_ind[i]`
+                is an ``ndarray`` of `shape=(nhd_i,)
+            - hd_param_val : m-tuple
+                For each instance in the model tuple, this variable defines the
+                hard conditioning VALUES (what to imposed). `hd_param_val[i]` is
+                an ``ndarray`` of `shape=(nhd_i,)`
+            - imod : int
+                Model index
+
+        Returns:
+            m-tuple
+                New model such as `(CatParam_1, ..., CatParam_m)`
     compute_log_p_lik : function
-        Computes the natural logarithm of the likelihood of m
+        Computes the natural logarithm of the likelihood of a model. It usually
+        runs an expensive forward operation and compares the response to a given
+        set of observations.
+
+        `compute_log_p_lik(model, imod)`
+
+        Parameters:
+            - model : m-tuple
+                Model such as `(CatParam_1, ..., CatParam_m)` (cf. output of
+                `generate_m()`)
+            - imod : int
+                Model index
+
+        Returns:
+            float
+                Log-likelihood value of the model
     get_hd_pri : function
         Provides the 'prior hard conditioning' that is used in the definition of
-        the model space
+        the model space (i.e. parameter values that are known without
+        uncertainty).
+
+        `get_hd_pri()`
+
+        Returns
+            - hd_pri_ind : m-tuple
+                For each instance in the model tuple, this variable defines the
+                hard conditioning INDICES.
+            - hd_pri_val : m-tuple
+                For each instance in the model tuple, this variable defines the
+                hard conditioning VALUES.
     compute_log_p_pri : function, optional
-        Computes quantity for the ratio corresponding to the log-prior
-        probability of m
+        This function computes the log-prior probability of a model that has
+        been generated from a given set of hard conditioning data. Note that
+        it's definition is OPTIONAL. If it is left undefined, a default
+        implementation will be used (see remark below).
+
+        `compute_log_p_pri(model, hd_p_pri, hd_param_ind)`
+
+        Parameters:
+            - model : m-tuple
+                Model such as `(CatParam_1, ..., CatParam_m)` (cf. output of
+                `generate_m()`)
+            - hd_p_pri : m-tuple
+                Tuple of the hard conditioning probability values for a given
+                model. Each probability value describes the prior probability of
+                observing the category of the model value at the corresponding
+                conditioning location.
+                hd_p_pri[i] is an ``ndarray`` of `shape=(nhd_i,)`
+            - hd_param_ind : m-tuple
+                Hard conditioning indices
+        Returns:
+            float
+                Log-prior probability value
+
     compute_log_p_gen : function, optional
-        Computes the quantity of the ratio corresponding to the log-generation
-        probability of m
+        This function computes the log-probability of generating a model in the
+        PoPEx sampling from a given set of hard conditioning. Note that it's
+        definition is OPTIONAL. If it is left undefined, a default
+        implementation will be used (see remark below).
+
+        `compute_log_p_gen(model, hd_p_gen, hd_param_ind)`
+
+        Parameters:
+            - model : m-tuple
+                Model such as `(CatParam_1, ..., CatParam_m)` (cf. output of
+                `generate_m()`)
+            - hd_p_gen : m-tuple
+                Tuple of the hard conditioning probability values for a given
+                model. Each probability value describes the prior probability of
+                observing the category of the model value at the corresponding
+                conditioning location.
+                hd_p_gen[i] is an ``ndarray`` of `shape=(nhd_i,)`
+            - hd_param_ind : m-tuple
+                Hard conditioning indices
+        Returns:
+            float
+                Log-generation probability value
     learning_scheme : Learning, optional
-        Learning scheme for log_p_lik
+        Learning scheme for log_p_lik (concrete sublcass of ``Learning``)
     meth_w_hd : dict, optional
         Defines the method for computing the learning weights that are used in
         the computation of the hard conditioning points (cf.
@@ -296,158 +381,60 @@ class Problem:
 
     Notes
     -----
-    The parameters of type ``function`` have themself parameter and return
-    values and must be defined as follows
 
-    (1) `generate_m(hd_param_ind, hd_param_val, imod)`
-        This function generates a model instance `m` being an m-tuple such that
+    (1) Let us provide a simple example for hard conditioning data in
+        `hd_param_ind` and `hd_param_val`. It is important to note that PoPEx
+        does NOT use any parameter locations. They might be defined by the
+        user. If so, they have to follow a certain structure. Let the parameter
+        locations be such that::
 
-                `m = (CatParam_1, ..., CatParam_m)`.
+                                        x    y    z
+            param_loc[0] = np.array([[0.5, 1.5, 0.5],   # Parameter 0
+                                     [0.5, 2.5, 0.5],   # Parameter 1
+                                     [0.5, 3.5, 0.5]]   # Parameter 2
 
+        and the parameter indices (in `hd_param_ind`) are for example::
 
-        param: hd_param_ind:    (m-tuple) For each instance in the model tuple,
-                            this variable defines the hard conditioning INDICES
-                            according to the parameter locations.
-                hd_param_ind[i] (nhd_i, ndarray) Defining the locations indices
-                                where the hard conditioning should be applied.
-                EXAMPLE:
-                |   It is important to note that PoPEx does NOT use any
-                |   parameter locations, but they are only defined by the user.
-                |   Nevertheless, they have to follow a certain structure, so
-                |   let the parameter locations be such that
-                |
-                |                                  x    y    z
-                |       param_loc[0] = np.array([[0.5, 1.5, 0.5],
-                |                                [0.5, 2.5, 0.5],
-                |                                [0.5, 3.5, 0.5]]
-                |
-                |   and the parameter indices (in 'hd_param_ind') are for
-                |   example
-                |
-                |       hd_param_ind[0] = [0, 2]
-                |
-                |   so we will use param_loc[0][hd_param_ind[0], :] for
-                |   obtaining the array
-                |
-                |           np.array([[0.5, 1.5, 0.5],
-                |                     [0.5, 3.5, 0.5]]).
-                |
-                |   This array indicates WHERE a hard conditioning should be
-                |   applied for the model type 0.
-                |
-        param: hd_param_val:    (m-tuple) For each model type, this variable
-                                defines the hard conditioning VALUES.
-                hd_param_val[i] (nhd_i, ndarray) Defining the hard conditioning
-                                values that should be imposed in a new model.
-                EXAMPLE (continuation):
-                |   let the parameter values (in 'hd_param_val') be given by
-                |
-                |       hd_param_val[0] = np.array([1.2, 2.5]).
-                |
-                |   Together with the first part of the example (above), for
-                |   the model type 0, this would impose hard conditioning data
-                |   as follows:
-                |
-                |             x     y     z     val
-                |            0.5   1.5   0.5    1.2
-                |            0.5   3.5   0.5    2.5
-                |
-        param: imod:        (int) Model index
+            hd_param_ind[0] = [0, 2]    # Condition parameter 0 and 2
 
-        return:             (m-tuple) Tuple of CatModel instances.
+        so we will use `param_loc[0][hd_param_ind[0], :]` for obtaining the
+        array::
 
-    (2) compute_log_p_lik(model, imod)
-    ----------------------------------
-        This function computes the natural logarithm of the likelihood of a
-        given model. It usually runs the forward operator and compares the
-        response to a given set of observations.
+            np.array([[0.5, 1.5, 0.5],
+                      [0.5, 3.5, 0.5]]).
 
-        --------------------------- !!! CAUTION !!! ---------------------------
-        If you choose to compute the train the PoPEx algorithm (i.e. derive a
-        set of hard conditioning data) according to the log-likelihood values
-        (rather than the likelihood values) you must make sure to only return
-        NON-POSITIVE log-likelihood values
-        -----------------------------------------------------------------------
+        This array indicates the physical locations where hard conditioning
+        should be applied for the model type `0`. Let the parameter values
+        (in `hd_param_val`) be given by::
 
-        param: model:   (m-tuple) Tuple of CatParam() instances.
-        param: imod:    (int) Model index
-        return:         (float64) Log-likelihood value of 'model'
+            hd_param_val[0] = np.array([1.2, 2.5]).
 
-    (3) get_hd_pri()
-    ----------------
-        This function gets the prior hard conditioning of the problem (i.e.
-        parameter values that are known without uncertainty).
+        Together with the conditioning locations above, this imposes hard
+        conditioning data as follows::
 
-        return:         (2-tuple) (hd_pri_ind, hd_pri_val)
-            return[1]   (m-tuple) For each instance in the model tuple, this
-                        variable defines the prior hard conditioning indices
-                        according to the parameter locations.
-            return[2]   (m-tuple) For each instance in the model tuple, this
-                        variable defines the prior hard conditioning values.
+             x     y     z     val
+            0.5   1.5   0.5    1.2
+            0.5   3.5   0.5    2.5
 
-            For an example of the hard conditioning structure, see the comments
-            in 'generate_m'.
+    (2) Note that it is possible to NOT define `compute_log_p_pri` and
+        `compute_log_p_gen`. In this case, a predefined function will be used.
+        This predefined implementation assumes that the quantities `p_pri` and
+        `p_gen` are only used TOGETHER in the form of a RATIO
 
-    (4) compute_log_p_pri(model, hd_p_pri, hd_param_ind)
-    ----------------------------------------------------
-        This function computes the log-prior probability of a model that has
-        been generated from a given set of hard conditioning data. Note that
-        it's definition is OPTIONAL. If it is left undefined, a default
-        implementation will be used (see remark below).
+            `ratio(m) = rho(m) / phi(m)`.
 
-        param: model:       (m-tuple) Tuple of Model instances
-        param: hd_p_pri:    (m-tuple) Tuple of the hard conditioning
-                            probability values for a given model. Each
-                            probability value describes the prior probability
-                            of observing the category of the model value at the
-                            corresponding conditioning location.
-                hd_p_pri[i] (nc_i, ndarray) Containing the category probability
-                            values.
-        param: hd_param_ind:(m-tuple) Hard conditioning indices (for a more
-                            detailed explanation see comments in
-                            'generate_m')
-        return:             (float) Log-prior probability value
+        In other words, the default functions assume that we are only interested
+        in the DIFFERENCE of the log values, i.e.
 
-    (5) compute_log_p_gen(model, hd_p_gen, hd_param_ind)
-    ----------------------------------------------------
-        This function computes the log-probability of generating a model in the
-        PoPEx sampling from a given set of hard conditioning. Note that it's
-        definition is OPTIONAL. If it is left undefined, a default
-        implementation will be used (see remark below).
-
-        param: model:       (m-tuple) Tuple of Model instances
-        param: hd_p_gen:    (m-tuple) Tuple of the hard conditioning
-                            probability values for a given model. Each
-                            probability value describes the weighted
-                            probability of observing the category of the model
-                            value at the corresponding conditioning location.
-                hd_p_gen[i] (nc_i, ndarray) Containing the category probability
-                            values
-        param: hd_param_ind:(m-tuple) Hard conditioning indices (for a more
-                            detailed explanation see comments in
-                            'generate_m')
-        return:             (float) Log-probability of generating a model
-
-
-    ---------------------------- !!! ATTENTION !!! ----------------------------
-    (1) Note that it is possible to NOT define 'compute_log_p_pri' and
-        'compute_log_p_gen'. In this case, a predefined function will be used.
-        This predefined implementation assumes that the quantities 'p_pri' and
-        'p_gen' are only used TOGETHER in the form of a RATIO
-
-            rho(m) / phi(m).
-
-        In other words, it assumes that we are only interested in the
-        DIFFERENCE of the log values, i.e.
-
-            log_p_pri - log_p_gen,
+            `log_p_pri - log_p_gen`,
 
         and never in the exact values on their own. It is left to the user to
         implement a more suitable computation, whenever the above assumption is
         not sufficient. For more information also consult the theoretical
         description of the PoPEx method.
-    (2) It is also possible to NOT define the 'learning_scheme'. In this case,
+    (3) It is also possible to NOT define the `learning_scheme`. In this case,
         the log-likelihood value will ALWAYS be computed.
+
     """
 
     def __init__(self,

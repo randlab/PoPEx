@@ -250,7 +250,7 @@ probability map that corresponds to a given set of categories (c.f.
 true probability values according to the true distribution. They should
 only be used in combination (as ratio r):</p>
 <blockquote>
-<div><cite>r = prior / generation</cite>.</div></blockquote>
+<div><cite>ratio(m) = rho(m) / phi(m)</cite>.</div></blockquote>
 <p>This ratio is important in the importance sampling framework where we want
 to compute weighted expectation values according to a set of generated
 models.</p>
@@ -1242,204 +1242,251 @@ return: None</p>
 <dl class="class">
 <dt id="popex.popex_objects.Problem">
 <em class="property">class </em><code class="descclassname">popex.popex_objects.</code><code class="descname">Problem</code><span class="sig-paren">(</span><em>generate_m</em>, <em>compute_log_p_lik</em>, <em>get_hd_pri</em>, <em>compute_log_p_pri=None</em>, <em>compute_log_p_gen=None</em>, <em>learning_scheme=None</em>, <em>meth_w_hd=None</em>, <em>nmtype=1</em>, <em>seed=0</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.Problem" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines the problem that should be addressed by the PoPEx method. The
-user must provide function definitions for ‘generate_m’ and
-‘compute_log_p_lik’. Optionally, a learning scheme can be defined in
-‘learning_scheme’.</p>
-<p>Optionally</p>
-<p>INSTANCE ATTRIBUTES
-generate_m          (callable) Generates a new model m
-compute_log_p_lik   (callable) Computes the natural logarithm of the</p>
-<blockquote>
-<div>likelihood of m</div></blockquote>
-<p>get_hd_pri          (callable) Assembles the ‘prior hard conditioning’</p>
-<p>—————————— (optional) ———————————
-compute_log_p_pri   (callable) Computes quantity for the ratio</p>
-<blockquote>
-<div>corresponding to the log-prior probability of m</div></blockquote>
+<dd><p>Defines the sampling problem that should be addressed by the PoPEx
+method.</p>
+<p>The user must provide function definitions for <cite>generate_m</cite> and
+<cite>compute_log_p_lik</cite>. For the definition of the model space, we can also
+provide ‘prior hard conditioning’ through the function <cite>get_hd_pri</cite>.
+Optionally, a likelihood learning scheme can be defined in
+<cite>learning_scheme</cite>. Furthermore, one also must define how to compute the
+ratio in the importance sampling weights. For this, the functions
+<cite>compute_log_p_pri</cite> and <cite>compute_log_p_gen</cite> can also be defined manually. If
+they are left empty, the default version that only considers the hard
+conditioning data points is used.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>generate_m</strong> (<em>function</em>) – <p>Generates a new model m from a set of hard conditioning data.</p>
+<p><cite>generate_m(hd_param_ind, hd_param_val, imod)</cite></p>
 <dl class="docutils">
-<dt>compute_log_p_gen   (callable) Computes the quantity of the ratio</dt>
-<dd><blockquote class="first">
-<div>corresponding to the log-generation probability of m</div></blockquote>
-<p class="last">(for more details about the callable instance variables see
-‘INSTANCE ATTRIBUTE DETAILS AND RECOMMENDATIONS’ below)</p>
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>hd_param_ind <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>For each instance in the model tuple, this variable defines the
+hard conditioning INDICES (where to apply HD). <cite>hd_param_ind[i]</cite>
+is an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> of <a href="#id1"><span class="problematic" id="id2">`</span></a>shape=(nhd_i,)</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>hd_param_val <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>For each instance in the model tuple, this variable defines the
+hard conditioning VALUES (what to imposed). <cite>hd_param_val[i]</cite> is
+an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> of <cite>shape=(nhd_i,)</cite></dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>imod <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Model index</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>m-tuple</dt>
+<dd>New model such as <cite>(CatParam_1, …, CatParam_m)</cite></dd>
+</dl>
 </dd>
 </dl>
+</li>
+<li><strong>compute_log_p_lik</strong> (<em>function</em>) – <p>Computes the natural logarithm of the likelihood of a model. It usually
+runs an expensive forward operation and compares the response to a given
+set of observations.</p>
+<p><cite>compute_log_p_lik(model, imod)</cite></p>
 <dl class="docutils">
-<dt>meth_w_hd:          (dict) Defines the method used in the</dt>
-<dd>computation of the hard conditioning points (HD)
-(see ‘utils.compute_w_lik’)</dd>
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>model <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>Model such as <cite>(CatParam_1, …, CatParam_m)</cite> (cf. output of
+<cite>generate_m()</cite>)</dd>
 </dl>
-<p>nmtype              (int) Number of model types
-seed                (int) Initial seed</p>
-<p>INSTANCE ATTRIBUTE DETAILS AND RECOMMENDATIONS
-(1) generate_m(hd_param_ind, hd_param_val, imod)
-————————————————</p>
-<blockquote>
-<div><p>This function generates a model instance m_k being a m-tuple such that</p>
-<blockquote>
-<div>m_k = (CatParam_k1, …, CatParam_km).</div></blockquote>
-<dl class="docutils">
-<dt>param: hd_param_ind:    (m-tuple) For each instance in the model tuple,</dt>
-<dd><blockquote class="first">
-<div>this variable defines the hard conditioning INDICES
-according to the parameter locations.</div></blockquote>
-<dl class="docutils">
-<dt>hd_param_ind[i] (nhd_i, ndarray) Defining the locations indices</dt>
-<dd>where the hard conditioning should be applied.</dd>
+</li>
+<li><dl class="first docutils">
+<dt>imod <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Model index</dd>
 </dl>
-<p class="last">EXAMPLE:
-|   It is important to note that PoPEx does NOT use any
-|   parameter locations, but they are only defined by the user.
-|   Nevertheless, they have to follow a certain structure, so
-|   let the parameter locations be such that
-|
-|                                  x    y    z
-|       param_loc[0] = np.array([[0.5, 1.5, 0.5],
-|                                [0.5, 2.5, 0.5],
-|                                [0.5, 3.5, 0.5]]
-|
-|   and the parameter indices (in ‘hd_param_ind’) are for
-|   example
-|
-|       hd_param_ind[0] = [0, 2]
-|
-|   so we will use param_loc[0][hd_param_ind[0], :] for
-|   obtaining the array
-|
-|           np.array([[0.5, 1.5, 0.5],
-|                     [0.5, 3.5, 0.5]]).
-|
-|   This array indicates WHERE a hard conditioning should be
-|   applied for the model type 0.
-|</p>
+</li>
+</ul>
 </dd>
-<dt>param: hd_param_val:    (m-tuple) For each model type, this variable</dt>
-<dd><blockquote class="first">
-<div>defines the hard conditioning VALUES.</div></blockquote>
-<dl class="docutils">
-<dt>hd_param_val[i] (nhd_i, ndarray) Defining the hard conditioning</dt>
-<dd>values that should be imposed in a new model.</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>float</dt>
+<dd>Log-likelihood value of the model</dd>
 </dl>
-<p class="last">EXAMPLE (continuation):
-|   let the parameter values (in ‘hd_param_val’) be given by
-|
-|       hd_param_val[0] = np.array([1.2, 2.5]).
-|
-|   Together with the first part of the example (above), for
-|   the model type 0, this would impose hard conditioning data
-|   as follows:
-|
-|             x     y     z     val
-|            0.5   1.5   0.5    1.2
-|            0.5   3.5   0.5    2.5
-|</p>
 </dd>
 </dl>
-<p>param: imod:        (int) Model index</p>
-<p>return:             (m-tuple) Tuple of CatModel instances.</p>
-</div></blockquote>
-<blockquote>
-<div><p>This function computes the natural logarithm of the likelihood of a
-given model. It usually runs the forward operator and compares the
-response to a given set of observations.</p>
-<p>————————— !!! CAUTION !!! —————————
-If you choose to compute the train the PoPEx algorithm (i.e. derive a
-set of hard conditioning data) according to the log-likelihood values
-(rather than the likelihood values) you must make sure to only return
-NON-POSITIVE log-likelihood values
-———————————————————————–</p>
-<p>param: model:   (m-tuple) Tuple of CatParam() instances.
-param: imod:    (int) Model index
-return:         (float64) Log-likelihood value of ‘model’</p>
-</div></blockquote>
-<blockquote>
-<div><p>This function gets the prior hard conditioning of the problem (i.e.
-parameter values that are known without uncertainty).</p>
+</li>
+<li><strong>get_hd_pri</strong> (<em>function</em>) – <p>Provides the ‘prior hard conditioning’ that is used in the definition of
+the model space (i.e. parameter values that are known without
+uncertainty).</p>
+<p><cite>get_hd_pri()</cite></p>
 <dl class="docutils">
-<dt>return:         (2-tuple) (hd_pri_ind, hd_pri_val)</dt>
-<dd><dl class="first docutils">
-<dt>return[1]   (m-tuple) For each instance in the model tuple, this</dt>
-<dd>variable defines the prior hard conditioning indices
-according to the parameter locations.</dd>
-<dt>return[2]   (m-tuple) For each instance in the model tuple, this</dt>
-<dd>variable defines the prior hard conditioning values.</dd>
+<dt>Returns</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>hd_pri_ind <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>For each instance in the model tuple, this variable defines the
+hard conditioning INDICES.</dd>
 </dl>
-<p class="last">For an example of the hard conditioning structure, see the comments
-in ‘generate_m’.</p>
+</li>
+<li><dl class="first docutils">
+<dt>hd_pri_val <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>For each instance in the model tuple, this variable defines the
+hard conditioning VALUES.</dd>
+</dl>
+</li>
+</ul>
 </dd>
 </dl>
-</div></blockquote>
-<blockquote>
-<div><p>This function computes the log-prior probability of a model that has
+</li>
+<li><strong>compute_log_p_pri</strong> (<em>function</em><em>, </em><em>optional</em>) – <p>This function computes the log-prior probability of a model that has
 been generated from a given set of hard conditioning data. Note that
 it’s definition is OPTIONAL. If it is left undefined, a default
 implementation will be used (see remark below).</p>
-<p>param: model:       (m-tuple) Tuple of Model instances
-param: hd_p_pri:    (m-tuple) Tuple of the hard conditioning</p>
-<blockquote>
-<div><blockquote>
-<div>probability values for a given model. Each
-probability value describes the prior probability
-of observing the category of the model value at the
-corresponding conditioning location.</div></blockquote>
+<p><cite>compute_log_p_pri(model, hd_p_pri, hd_param_ind)</cite></p>
 <dl class="docutils">
-<dt>hd_p_pri[i] (nc_i, ndarray) Containing the category probability</dt>
-<dd>values.</dd>
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>model <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>Model such as <cite>(CatParam_1, …, CatParam_m)</cite> (cf. output of
+<cite>generate_m()</cite>)</dd>
 </dl>
-</div></blockquote>
-<dl class="docutils">
-<dt>param: hd_param_ind:(m-tuple) Hard conditioning indices (for a more</dt>
-<dd>detailed explanation see comments in
-‘generate_m’)</dd>
+</li>
+<li><dl class="first docutils">
+<dt>hd_p_pri <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>Tuple of the hard conditioning probability values for a given
+model. Each probability value describes the prior probability of
+observing the category of the model value at the corresponding
+conditioning location.
+hd_p_pri[i] is an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> of <cite>shape=(nhd_i,)</cite></dd>
 </dl>
-<p>return:             (float) Log-prior probability value</p>
-</div></blockquote>
-<blockquote>
-<div><p>This function computes the log-probability of generating a model in the
+</li>
+<li><dl class="first docutils">
+<dt>hd_param_ind <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>Hard conditioning indices</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>float</dt>
+<dd>Log-prior probability value</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><strong>compute_log_p_gen</strong> (<em>function</em><em>, </em><em>optional</em>) – <p>This function computes the log-probability of generating a model in the
 PoPEx sampling from a given set of hard conditioning. Note that it’s
 definition is OPTIONAL. If it is left undefined, a default
 implementation will be used (see remark below).</p>
-<p>param: model:       (m-tuple) Tuple of Model instances
-param: hd_p_gen:    (m-tuple) Tuple of the hard conditioning</p>
-<blockquote>
-<div><blockquote>
-<div>probability values for a given model. Each
-probability value describes the weighted
-probability of observing the category of the model
-value at the corresponding conditioning location.</div></blockquote>
+<p><cite>compute_log_p_gen(model, hd_p_gen, hd_param_ind)</cite></p>
 <dl class="docutils">
-<dt>hd_p_gen[i] (nc_i, ndarray) Containing the category probability</dt>
-<dd>values</dd>
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>model <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>Model such as <cite>(CatParam_1, …, CatParam_m)</cite> (cf. output of
+<cite>generate_m()</cite>)</dd>
 </dl>
-</div></blockquote>
-<dl class="docutils">
-<dt>param: hd_param_ind:(m-tuple) Hard conditioning indices (for a more</dt>
-<dd>detailed explanation see comments in
-‘generate_m’)</dd>
+</li>
+<li><dl class="first docutils">
+<dt>hd_p_gen <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>Tuple of the hard conditioning probability values for a given
+model. Each probability value describes the prior probability of
+observing the category of the model value at the corresponding
+conditioning location.
+hd_p_gen[i] is an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> of <cite>shape=(nhd_i,)</cite></dd>
 </dl>
-<p>return:             (float) Log-probability of generating a model</p>
+</li>
+<li><dl class="first docutils">
+<dt>hd_param_ind <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
+<dd>Hard conditioning indices</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd><dl class="first last docutils">
+<dt>float</dt>
+<dd>Log-generation probability value</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><strong>learning_scheme</strong> (<a class="reference internal" href="#popex.popex_objects.Learning" title="popex.popex_objects.Learning"><em>Learning</em></a><em>, </em><em>optional</em>) – Learning scheme for log_p_lik (concrete sublcass of <code class="docutils literal notranslate"><span class="pre">Learning</span></code>)</li>
+<li><strong>meth_w_hd</strong> (<em>dict</em><em>, </em><em>optional</em>) – Defines the method for computing the learning weights that are used in
+the computation of the hard conditioning points (cf.
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_w_lik()</span></code>)</li>
+<li><strong>nmtype</strong> (<em>int</em>) – Number of model types</li>
+<li><strong>seed</strong> (<em>int</em>) – Initial seed</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<ol class="arabic">
+<li><p class="first">Let us provide a simple example for hard conditioning data in
+<cite>hd_param_ind</cite> and <cite>hd_param_val</cite>. It is important to note that PoPEx
+does NOT use any parameter locations. They might be defined by the
+user. If so, they have to follow a certain structure. Let the parameter
+locations be such that:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                            <span class="n">x</span>    <span class="n">y</span>    <span class="n">z</span>
+<span class="n">param_loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>   <span class="c1"># Parameter 0</span>
+                         <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>   <span class="c1"># Parameter 1</span>
+                         <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]]</span>   <span class="c1"># Parameter 2</span>
+</pre></div>
+</div>
+<p>and the parameter indices (in <cite>hd_param_ind</cite>) are for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hd_param_ind</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>    <span class="c1"># Condition parameter 0 and 2</span>
+</pre></div>
+</div>
+<p>so we will use <cite>param_loc[0][hd_param_ind[0], :]</cite> for obtaining the
+array:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span>
+          <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>This array indicates the physical locations where hard conditioning
+should be applied for the model type <cite>0</cite>. Let the parameter values
+(in <cite>hd_param_val</cite>) be given by:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hd_param_val</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">])</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Together with the conditioning locations above, this imposes hard
+conditioning data as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="n">x</span>     <span class="n">y</span>     <span class="n">z</span>     <span class="n">val</span>
+<span class="mf">0.5</span>   <span class="mf">1.5</span>   <span class="mf">0.5</span>    <span class="mf">1.2</span>
+<span class="mf">0.5</span>   <span class="mf">3.5</span>   <span class="mf">0.5</span>    <span class="mf">2.5</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">Note that it is possible to NOT define <cite>compute_log_p_pri</cite> and
+<cite>compute_log_p_gen</cite>. In this case, a predefined function will be used.
+This predefined implementation assumes that the quantities <cite>p_pri</cite> and
+<cite>p_gen</cite> are only used TOGETHER in the form of a RATIO</p>
+<blockquote>
+<div><p><cite>ratio(m) = rho(m) / phi(m)</cite>.</p>
 </div></blockquote>
-<p>—————————- !!! ATTENTION !!! —————————-
-(1) Note that it is possible to NOT define ‘compute_log_p_pri’ and</p>
+<p>In other words, the default functions assume that we are only interested
+in the DIFFERENCE of the log values, i.e.</p>
 <blockquote>
-<div><p>‘compute_log_p_gen’. In this case, a predefined function will be used.
-This predefined implementation assumes that the quantities ‘p_pri’ and
-‘p_gen’ are only used TOGETHER in the form of a RATIO</p>
-<blockquote>
-<div>rho(m) / phi(m).</div></blockquote>
-<p>In other words, it assumes that we are only interested in the
-DIFFERENCE of the log values, i.e.</p>
-<blockquote>
-<div>log_p_pri - log_p_gen,</div></blockquote>
+<div><p><cite>log_p_pri - log_p_gen</cite>,</p>
+</div></blockquote>
 <p>and never in the exact values on their own. It is left to the user to
 implement a more suitable computation, whenever the above assumption is
 not sufficient. For more information also consult the theoretical
 description of the PoPEx method.</p>
-</div></blockquote>
-<ol class="arabic simple" start="2">
-<li>It is also possible to NOT define the ‘learning_scheme’. In this case,
-the log-likelihood value will ALWAYS be computed.</li>
+</li>
+<li><p class="first">It is also possible to NOT define the <cite>learning_scheme</cite>. In this case,
+the log-likelihood value will ALWAYS be computed.</p>
+</li>
 </ol>
 </dd></dl>
 
