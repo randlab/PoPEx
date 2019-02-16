@@ -360,8 +360,8 @@ class Problem:
                 Tuple of the hard conditioning probability values for a given
                 model. Each probability value describes the prior probability of
                 observing the category of the model value at the corresponding
-                conditioning location.
-                hd_p_gen[i] is an ``ndarray`` of `shape=(nhd_i,)`
+                conditioning location. `hd_p_gen[i]` is an ``ndarray`` of
+                `shape=(nhd_i,)`
             - hd_param_ind : m-tuple
                 Hard conditioning indices
         Returns:
@@ -501,33 +501,48 @@ class Problem:
 
 
 def _default_log_p(model, hd_prob, hd_ind):
-    """ _DEFAULT_LOG_P(...) is a default definition of a function that computes
-    the log-probability of generating a model from a given set of hard
+    """ `_default_log_p` is a default definition of the function that computes
+    the log-probability of sampling a model from a given set of hard
     conditioning data. In this definition, it is assumed that the hard
     conditioning locations and all the model types are INDEPENDENT. From these
-    assumptions, it follows that the (prior or PoPEx) probability of sampling
-    a model m is obtained by
+    assumptions, it follows that the probability of sampling a model is obtained
+    by
 
-        p = p_1 * ... * p_nmtype
+        `p = p_1 * ... * p_nmtype`
 
     where
 
-        p_i = hd_prob[i][1] * ... * hd_prob[i][nc_i].
+        `p_i = hd_prob[i][1] * ... * hd_prob[i][nc_i]`.
 
     Therefore, the log-probability is then given by
 
-        log_p_gen = sum_i sum_j log(hd_prob[i][j]).
+        `log_p_gen = sum_i sum_j log(hd_prob[i][j])`
 
-    :param model:       (m-tuple) Tuple of 'MType' instances
-    :param hd_prob:     (m-tuple) Tuple of the hard conditioning probabilities
-                        for a given model. Each probability value describes the
-                        probability of observing the model category at the
-                        corresponding location.
-            hd_prob[i]  (nc_i, ndarray) Containing the category probability
-                        values
-    :param hd_ind:      (m-tuple) Hard conditioning indices (for a more
-                        detailed explanation see comments in 'generate_m')
-    :return             (float) Log-probability of generating a model
+    where `i` runs through the model types and `j` through the conditioning
+    points within a given model type.
+
+
+    Parameters
+    ----------
+    model : m-tuple
+        Tuple of 'MType' instances defining a model
+    hd_prob : m-tuple
+        Tuple of the hard conditioning probabilities for a given model. Each
+        probability value quantifies the probability of observing the
+        corresponding parameter category at the this location.
+
+            hd_prob[i] : ndarray, shape=(nc_i,)
+                Containing the category probability values
+    hd_ind : m-tuple
+        Hard conditioning indices (for a more detailed explanation see comments
+        in 'generate_m')
+
+
+    Returns
+    -------
+    float
+        Log-probability of sampling a model
+
     """
     # Raise all numpy errors for this function
     old_settings = np.seterr(all='raise')
@@ -548,55 +563,104 @@ def _default_log_p(model, hd_prob, hd_ind):
 
 
 class Learning(abc.ABC):
-    """ Defines a learning scheme that is dedicated to particular training
-    sets. It is supposed that there is a choice between 'evaluating the exact
-    answer' (which is potentially very expensive) or 'predicting the
-    answer by a machine learning scheme' (which should be very fast). The
-    function 'compute_p_eval_for' computes a probability that expresses if the
-    value should be evaluated exactly. The two extreme probabilitys thus
-    signify:
+    """ `Learning` defines an abstract parent class for a learning scheme.
 
-        0: Value will be predicted
-        1: Value must be evaluated exactly.
+    Let's assume that we want to define a learning scheme that predicts the
+    log-likelihood of a model. In this case we define an explicite sub-class
+    of ``Learning`` and provide implementations of the methods
 
+        - :meth:`train`
+        - :meth:`compute_p_eval_for`
+        - :meth:`learn_value_of`
 
-    INSTANCE METHODS
-    train(...)          (abstract) Trains the learning scheme
-    compute_p_eval_for(...) (abstract) Returns the probability with which the
-                        value of a given model is evaluated exactly
-    learn_value_of(...) (abstract) Predicts the value of a model based on the
-                        existing learning scheme
+    It is assumed that there is a choice between 'evaluating the exact
+    answer' (which is very expensive) or 'predicting the  answer by a machine
+    learning scheme' (which should be very fast). The learning scheme undergoes
+    the following main steps
+
+        - Update the learning scheme regularly by using the function
+          :meth:`trian` (cf. `upd_ls_freq` in `algorithm.run_popex_mp`). Note
+          that here you can choose to only use likelihood values that have
+          effectively been computed (cf. `PoPEx.cmp_log_p_lik`).
+        - For a given instance compute a probability `p in [0,1]` with which
+          the log-likelihood is predicted or evaluated (cf.
+          :meth:`compute_p_eval_for`) and then the value eventually is predicted
+          (cf. :meth:`learn_value_of`).
+
+    Notes
+    -----
+        In the PoPEx framework this can be used to learn the log-likelihood
+        values for each model (=value of interest). In this regard, predicting a
+        value rather than computing it can considerably improve the overall
+        computational time.
     """
 
     @abc.abstractmethod
-    def train(self, data_set):
+    def train(self, popex):
         """ This method creates a learning scheme.
 
-        :return: None
+        The learning scheme can be saved as class parameter.
+
+        Parameters
+        ----------
+        popex : PoPEx
+            PoPEx main structure (cf `popex_objects.PoPEx`)
+
+
+        Returns
+        -------
+        None
+
         """
 
     @abc.abstractmethod
-    def compute_p_eval_for(self, instance):
+    def compute_p_eval_for(self, model):
         """ Computes and return a probability value in [0, 1] that determines
-        whether a model should be evaluated exactly. The two extreme confidence
-        values signify the following:
-
-            0: Value can be learned from the learning scheme
-            1: Value should be evaluated exactly.
+        whether a model should be evaluated exactly.
 
 
-        :param instance:    ( ? ) Instance corresponding to the data set
-        :return:            (float) Probability value in [0, 1]
+        The two extreme confidence values signify:
+
+            `p=0`: Value can be learned from the learning scheme
+            `p=1`: Value should be evaluated exactly.
+
+
+        Parameters
+        ----------
+        model : m-tuple
+            Tuple of ``Mtype`` instances that define the new model
+
+
+        Returns
+        -------
+        float
+            Probability value in `[0, 1]`
+
         """
 
     @abc.abstractmethod
-    def learn_value_of(self, instance):
-        """ Uses the existing learning scheme to learn the value of interest
-        corresponding to a given model. This function should raise an error if
-        there is no existing learning scheme.
+    def learn_value_of(self, model):
+        """ Uses the existing learning scheme to learn the value of interest for
+        an instance.
 
-        :param instance:    ( ? ) Instance corresponding to the data set
-        :return:            ( ? ) Predicted value
+
+        Notes
+        -----
+        This function should raise an error if there is no existing learning
+        scheme.
+
+
+        Parameters
+        ----------
+        model : m-tuple
+            Tuple of ``Mtype`` instances that define the new model
+
+
+        Returns
+        -------
+        float
+            Predicted log-likelihood value
+
         """
 
 
@@ -604,26 +668,40 @@ class Prediction:
     """ Defines a prediction that should be computed based on an existing
     PoPEx instance.
 
-    INSTANCE ATTRIBUTES
-    compute_pred        (callable) Runs the prediction of a model m
-        (for more details about the callable instance variables see
-        'INSTANCE ATTRIBUTE DETAILS AND RECOMMENDATIONS' below)
-    meth_w_hd:          (dict) Defines the method used for weighting the
-                        predictions (see 'utils.compute_w_lik')
-    nw_min              (float) Minimum number of effective weights
-    wfrac_pred          (float) Number in (0,1] defining the fraction of the
-                        total weight to be used for the prediction
+    The user must provide function definitions for `compute_pred` that actually
+    implements the prediction operator. Note that there is no return value
+    expected from that function. Any important result can be saved under
 
-    INSTANCE ATTRIBUTE DETAILS AND RECOMMENDATIONS
-    (1) compute_pred(popex, imod)
-    -----------------------------
-        This function computes the prediction of a given model. There is no
-        return value expected so that the function must save important results
-        at
+        | <path_res>$
+        |  ├-- solution
+        |      └-- pred_<name>_modXXXXXX
 
-        param: popex:   (PoPEx) (see 'popex_objects.PoPEx')
-        param: imod:    (int) Simulation index
-        return: None
+
+    Parameters
+    ----------
+    compute_pred : function
+        Computes the prediction for a given model.
+
+        `compute_pred(popex, imod)`
+
+        Parameters:
+            - popex : PoPEx
+                PoPEx main structure (cf `popex_objects.PoPEx`)
+            - imod : int
+                Model index
+
+        Returns:
+            None
+    meth_w_pred : dict
+        Defines the method used for computing the prediction weights (cf.
+        :meth:`utils.compute_w_lik`)
+    nw_min : float
+        Minimum number of effective weights (= l_0)
+    wfrac_pred : float
+        Number in (0,1] defining the fraction of the total weight to be used for
+        the prediction. If `p=1`, all predictions for any model that has
+        non-zero weight is computed. If `p<1` we take the minimum number of
+        weight to cover a ratio of `p` of the total sum of weights.
     """
 
     def __init__(self,
@@ -637,8 +715,8 @@ class Prediction:
             self.meth_w_pred = {'name': 'exact'}
         else:
             self.meth_w_pred  = dict(meth_w_pred)
-        self.nw_min       = float(nw_min)
-        self.wfrac_pred   = float(wfrac_pred)
+        self.nw_min     = float(nw_min)
+        self.wfrac_pred = float(wfrac_pred)
 
     def __repr__(self):
         class_name = type(self).__name__
@@ -660,11 +738,12 @@ class Prediction:
 class MType(abc.ABC):
     """ This class is the parent of any quantity associated to a model type.
 
-    INSTANCE ATTRIBUTES
-    param_val:      (nparam x ? ndarray) Values associated to the parameters
-
-    INSTANCE PROPERTIES
-    nparam:         (int) Number of parameters
+    Parameters
+    ----------
+    dtype_val : str
+        Type of the ``ndarray`` values (eg. 'int8', 'float32', 'float64', etc)
+    param_val : ndarray
+        Values associated to the parameters
     """
 
     def __init__(self, dtype_val='float64', param_val=None):
@@ -702,27 +781,33 @@ class MType(abc.ABC):
     def nparam(self):
         """ Number of parameters.
 
-        :return:        (int) Number of values in 'param_val'
+        Returns
+        -------
+        int
+            Number of values in `param_val`
         """
         return self.param_val.shape[0]
 
 
 class CatMType(MType):
-    """ This class is the parent of any quantity associated to a model type and
-    some categories.
+    """ This class is the abstract parent of any quantity associated to a
+    categorical model type.
 
-    INSTANCE ATTRIBUTES
-    param_val:      (nparam x ? ndarray) Values associated to the parameters
-    categories:     (list) List of size ncat. Each item is a list of 2-tuples
-                    that define the value range for the category.
-                    EXAMPLE: If categories[i] = [(v1, v2), (v3, v4)], where vi
-                    are real numbers, then the category i is defined by all the
-                    values contained in the union
-                            [v1, v2) U [v3, v4)
+    Parameters
+    ----------
+    dtype_val : str
+        Type of the ``ndarray`` values (eg. 'int8', 'float32', 'float64', etc)
+    param_val : ndarray
+        Values associated to the parameters
+    categories : list
+        List of size `ncat`. Each instance of the list is again a list
+        of 2-tuples that define the value range for the category.
 
-    INSTANCE PROPERTIES
-    nparam:         (int) Number of parameters
-    ncat:           (int) Number of categories
+        If `categories[i] = [(v1, v2), (v3, v4)]`, where `vi` are real values,
+        then the category `i` is defined by the union
+
+            `[v1, v2) U [v3, v4)`
+
     """
 
     def __init__(self, dtype_val='float64', param_val=None, categories=None):
@@ -771,20 +856,21 @@ class CatMType(MType):
     def ncat(self):
         """ Number of categories.
 
-        :return:        (int) Number of categories in 'categories
+        Returns
+        int
+            Number of categories in `categories`
         """
         return len(self.categories)
 
 
 class ContParam(MType):
-    """ This class is used to define a continuous 1-dimensional parameter map
-    that is associated to a model type.
+    """ This class is used to define a map of continuous values where each value
+    is associated to a model parameter (e.g. `entropy`, `kld`, etc.).
 
-    INSTANCE ATTRIBUTES
-    param_val:      (nparam, ndarray) 1-dimensional parameter array
 
-    INSTANCE PROPERTIES
-    nparam:         (int) Number of parameters in self.param_val
+    Notes
+    -----
+        The shape of `param_val` is `(nparam,)`.
     """
 
     def __setattr__(self, key, value):
@@ -801,22 +887,14 @@ class ContParam(MType):
 
 
 class CatProb(CatMType):
-    """ This class is used to define multiple parameter maps that are
-    associated to categories within a given model type.
+    """ This class is used to define a map of continuous values for each
+    category, where each value is associated to a model parameter (e.g. `p_cat`,
+    `q_cat`, etc.).
 
-    INSTANCE ATTRIBUTES
-    param_val:      (nparam x ncat ndarray) Values associated to the parameters
-                    and the categories.
-    categories:     (list) List of size ncat. Each item is a list of 2-tuples
-                    that define the value range for the category.
-                    EXAMPLE: If categories[i] = [(v1, v2), (v3, v4)], where vi
-                    are real numbers, then the category i is defined by all the
-                    values contained in the union
-                            [v1, v2) U [v3, v4)
 
-    INSTANCE PROPERTIES
-    nparam:         (int) Number of parameters
-    ncat:           (int) Number of categories
+    Notes
+    -----
+        The shape of `param_val` is `(nparam, ncat)`.
     """
 
     def __setattr__(self, key, value):
@@ -837,24 +915,15 @@ class CatProb(CatMType):
 
 class CatParam(CatMType):
     """ This class is used to define a categorized 1-dimensional parameter map
-    that is associated to a model type. At the same time, a category indicator
-    array will be generated. This array can be used to learn the category of
-    each value in param_val.
+    that is associated to a model type (e.g. `model`, etc). The categories of
+    each model parameter in `param_val` is indicated in `param_cat`. These
+    categories are automatically updated if `param_val` or `categories` change.
 
-    INSTANCE ATTRIBUTES
-    param_val:      (nparam, ndarray) Values associated to the parameters
-    categories:     (list) List of size ncat. Each item is a list of 2-tuples
-                    that define the value range for the category.
-                    EXAMPLE: If categories[i] = [(v1, v2), (v3, v4)], where vi
-                    are real numbers, then the category i is defined by all the
-                    values contained in the union
-                            [v1, v2) U [v3, v4)
 
-    INSTANCE PROPERTIES
-    param_cat:      (nparam, ndarray) Category index of the values in
-                    'param_val'
-    nparam:         (int) Number of parameters
-    ncat:           (int) Number of categories
+    Notes
+    -----
+        The shape of `param_val` and `param_cat` is `(nparam,)`.
+
     """
 
     _nint_cat = 16
@@ -903,6 +972,11 @@ class CatParam(CatMType):
     def _update_param_cat(self):
         """ This function is used to update '__param_cat' which indicates the
         category index for each parameter value.
+
+        Returns
+        ------
+        None
+
         """
         # Categorize the parameters according to self.categories
         self.__param_cat = np.zeros_like(self.param_val, dtype=self._dtype_cat)
@@ -926,7 +1000,9 @@ class CatParam(CatMType):
     def param_cat(self):
         """ Category indicator array.
 
-        :return:        (nparam, ndarray) Category index of the values in
-                        'param_val'
+        Returns
+        -------
+        ndarray, shape=(nparam,)
+            Category indicators of the values in `param_val`.
         """
         return self.__param_cat
