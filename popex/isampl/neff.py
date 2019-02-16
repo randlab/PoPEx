@@ -1,12 +1,12 @@
-""" isampl.neff is a module that implements the most common importance
+""" `isample.neff` is a module that implements the most common importance
 sampling diagnostics used in the PoPEx procedure. Namely these are
 
-    - ne(...)           Effective number of weights for the estimation
-    - ne_var(...)       Effective number of weights for the variance
-    - ne_gamma(...)     Effective number of weights for the skewness
-    - alpha(...)        Optimization for finding the weight correction
-                        exponent
-    - correct_w(...)    Uses 'alpha' to compute the set of corrected weights
+    - :meth:`ne`            Effective number of weights for the estimation
+    - :meth:`ne_var`        Effective number of weights for the variance
+    - :meth:`ne_gamma`      Effective number of weights for the skewness
+    - :meth:`alpha`         Optimization for finding the weight correction
+                            exponent
+    - :meth:`correct_w`     Uses `alpha` to compute the set of corrected weights
 """
 
 # -------------------------------------------------------------------------
@@ -28,12 +28,23 @@ from popex.cnsts import NP_MIN_TOL, ALPHA_MIN, ALPHA_MAX
 
 
 def ne(weights):
-    """ WEIGHTS(...) computes the effective number of weights in 'weights':
+    """ `ne` computes the effective number of weights.
 
-            n_e(w_1, ..., w_n) = ( \sum w_i )^2 / ( \sum w_i^2 ).
+    Kish's effective number of weights is computed as
 
-    :param weights: (1 x n ndarray) Set of weights.
-    :return:        (float) Effective number of weights.
+        `n_e(w_1, ..., w_n) = ( \sum w_i )^2 / ( \sum w_i^2 )`.
+
+
+    Parameters
+    ----------
+    weights : ndarray, shape=(n,)
+        Set of weights.
+
+    Returns
+    -------
+    float
+        Effective number of weights.
+
     """
     # Raise numpy over-/underflow errors
     old_settings = np.seterr(over='raise', under='raise')
@@ -67,13 +78,25 @@ def ne(weights):
 
 
 def ne_var(weights):
-    """ NE_VAR(...) computes the effective number of weights in 'weights' that
-    corresponds to an empirical computation of the variance:
+    """ `ne_var` computes the effective number of weights for estimating the
+    variance.
 
-            n_e(w_1, ..., w_n) = ( \sum w_i^2 )^2 / ( \sum w_i^4 ).
+    The effective number of weights for an empirical estimation of the variance
+    is computed as:
 
-    :param weights: (1 x n ndarray) Set of weights.
-    :return:        (float) Effective number of weights.
+        `n_e(w_1, ..., w_n) = ( \sum w_i^2 )^2 / ( \sum w_i^4 )`.
+
+
+    Parameters
+    ----------
+    weights : ndarray, shape=(n,)
+        Set of weights.
+
+    Returns
+    -------
+    float
+        Effective number of weights (for the variance).
+
     """
     # Raise numpy overflow errors
     old_settings = np.seterr(over='raise', under='raise')
@@ -91,13 +114,23 @@ def ne_var(weights):
 
 
 def ne_gamma(weights):
-    """ NE_GAMMA(...) computes the effective number of weights in 'weights'
-    that corresponds to an empirical computation of the skewness:
+    """ `ne_gamma` computes the effective number of weights for the skewness.
 
-            n_e(w_1, ..., w_n) = ( \sum w_i^2 )^3 / ( ( \sum w_i^3 )^2 ).
+    The effective number of weights for estimating the skewness is computed as:
 
-    :param weights: (1 x n ndarray) Set of weights.
-    :return:        (float) Effective number of weights.
+        `n_e(w_1, ..., w_n) = ( \sum w_i^2 )^3 / ( ( \sum w_i^3 )^2 )`.
+
+
+    Parameters
+    ----------
+    weights : ndarray, shape=(n,)
+        Set of weights.
+
+    Returns
+    -------
+    float
+        Effective number of weights (for the skewness).
+
     """
     # Raise numpy overflow errors
     old_settings = np.seterr(over='raise', under='raise')
@@ -115,22 +148,36 @@ def ne_gamma(weights):
 
 
 def alpha(weights, theta, a_init=1):
-    """ ALPHA(...) Let k_1 be the number of zero weights, while k_2 is the
-    number of weights that attain the maximum value in 'weights'. For a given
-    theta in the interval (k_2, n-k_1), this functions finds the unique alpha
-    such that
+    """ `alpha` computes the best `alpha` for lowering the skewness of the
+    weights.
 
-            neff.ne(weights ** alpha) = theta.
+
+    Let `k_1` be the number of zero weights and `k_2` is the number of weights
+    that attain the maximum value in 'weights'. For a given theta in the
+    interval `(k_2, n-k_1)`, this functions finds the unique `alpha` such that
+
+        `neff.ne(weights ** alpha) = theta`.
 
     The alpha is found by using the 'L-BFGS-B' optimization algorithm of
-    scipy.optimize with initial value equal to a_init. We set upper and lower
-    bounds to ALPHA_MIN and ALPHA_MAX, respectively. The maximum number of
-    iterations is 15.
+    `scipy.optimize` with initial value equal to `a_init`. We set upper and
+    lower bounds to `ALPHA_MIN` and `ALPHA_MAX`, respectively. The maximum
+    number of iterations is 15.
 
-    :param weights: (1 x n ndarray) Set of weights.
-    :param theta:   (float) A positive number
-    :param a_init:  (float) Initial guess for the optimization.
-    :return         (float) alpha value
+    Parameters
+    ----------
+    weights : ndarray, shape=(n,)
+        Set of weights
+    theta : float
+        A positive value for the effective number of weights
+    a_init : float
+        Initial guess for the optimization problem
+
+
+    Returns
+    -------
+    float
+        `alpha` value
+
     """
     # Set numpy error behaviour
     old_settings = np.seterr(over='raise', under='raise')
@@ -170,17 +217,25 @@ def alpha(weights, theta, a_init=1):
 
 
 def correct_w(weights, ne_w_corr):
-    """ CORRECT_W(...) is a function that uses forms a power set in order to
-    return corrected weights such that
+    """ `correct_w` is a function that lowers the skewness of the weights.
 
-        ne(w_corr) = ne_w_corr.
+    In addition to the method :meth:`alpha` it computes whether the correction
+    is possible and treats the exceptions accordingly.
 
-    In addition to 'alpha' it computes whether this is possible and treats the
-    exceptions accordingly.
 
-    :param weights:     (1 x n ndarray) Set of weights
-    :param ne_w_corr:   (float) The goal for ne(w_corr)
-    :return:
+    Parameters
+    ----------
+    weights : ndarray, shape=(n,)
+        Set of weights
+    ne_w_corr : float
+        A positive value for the effective number of weights
+
+
+    Returns
+    -------
+    w_corr : ndarray, shape=(n,)
+        Corrected set of weights that is also normalized
+
     """
     a_val = alpha(weights, ne_w_corr, a_init=1)
 
