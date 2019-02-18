@@ -1,12 +1,16 @@
+# -*- coding: utf-8 -*-
 """ `isample.neff` is a module that implements the most common importance
 sampling diagnostics used in the PoPEx procedure. Namely these are
 
-    - :meth:`ne`            Effective number of weights for the estimation
-    - :meth:`ne_var`        Effective number of weights for the variance
-    - :meth:`ne_gamma`      Effective number of weights for the skewness
+    - :meth:`ne`            Effective number of weights for estimating the
+      expectation
+    - :meth:`ne_var`        Effective number of weights for estimating the
+      variance
+    - :meth:`ne_gamma`      Effective number of weights for estimating the
+      skewness
     - :meth:`alpha`         Optimization for finding the weight correction
-                            exponent
-    - :meth:`correct_w`     Uses `alpha` to compute the set of corrected weights
+      exponent
+    - :meth:`correct_w`     Computes the set of corrected weights
 """
 
 # -------------------------------------------------------------------------

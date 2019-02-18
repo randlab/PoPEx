@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """ `utils.py` contains utilities for performing a PoPEx sampling and computing
 predictions:
 

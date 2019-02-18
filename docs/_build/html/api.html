@@ -85,7 +85,11 @@
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">API of PoPEx Package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#module-popex.algorithm">Algorithm</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#module-popex.utils">Utilities</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#utilities">Utilities</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-popex.utils">Generic PoPEx utilities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-popex.isampl.neff"><cite>n_e</cite> utilities</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#module-popex.popex_objects">Classes</a></li>
 </ul>
 </li>
@@ -285,8 +289,10 @@ intermediate saves)</li>
 </dd></dl>
 
 </div>
+<div class="section" id="utilities">
+<h2>Utilities<a class="headerlink" href="#utilities" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="module-popex.utils">
-<span id="utilities"></span><h2>Utilities<a class="headerlink" href="#module-popex.utils" title="Permalink to this headline">¶</a></h2>
+<span id="generic-popex-utilities"></span><h3>Generic PoPEx utilities<a class="headerlink" href="#module-popex.utils" title="Permalink to this headline">¶</a></h3>
 <p><cite>utils.py</cite> contains utilities for performing a PoPEx sampling and computing
 predictions:</p>
 <dl class="docutils">
@@ -840,9 +846,154 @@ file.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-popex.isampl.neff">
+<span id="n-e-utilities"></span><h3><cite>n_e</cite> utilities<a class="headerlink" href="#module-popex.isampl.neff" title="Permalink to this headline">¶</a></h3>
+<p><cite>isample.neff</cite> is a module that implements the most common importance
+sampling diagnostics used in the PoPEx procedure. Namely these are</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference internal" href="#popex.isampl.neff.ne" title="popex.isampl.neff.ne"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ne()</span></code></a>            Effective number of weights for estimating the
+expectation</li>
+<li><a class="reference internal" href="#popex.isampl.neff.ne_var" title="popex.isampl.neff.ne_var"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ne_var()</span></code></a>        Effective number of weights for estimating the
+variance</li>
+<li><a class="reference internal" href="#popex.isampl.neff.ne_gamma" title="popex.isampl.neff.ne_gamma"><code class="xref py py-meth docutils literal notranslate"><span class="pre">ne_gamma()</span></code></a>      Effective number of weights for estimating the
+skewness</li>
+<li><a class="reference internal" href="#popex.isampl.neff.alpha" title="popex.isampl.neff.alpha"><code class="xref py py-meth docutils literal notranslate"><span class="pre">alpha()</span></code></a>         Optimization for finding the weight correction
+exponent</li>
+<li><a class="reference internal" href="#popex.isampl.neff.correct_w" title="popex.isampl.neff.correct_w"><code class="xref py py-meth docutils literal notranslate"><span class="pre">correct_w()</span></code></a>     Computes the set of corrected weights</li>
+</ul>
+</div></blockquote>
+<dl class="function">
+<dt id="popex.isampl.neff.alpha">
+<code class="descclassname">popex.isampl.neff.</code><code class="descname">alpha</code><span class="sig-paren">(</span><em>weights</em>, <em>theta</em>, <em>a_init=1</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.isampl.neff.alpha" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>alpha</cite> computes the best <cite>alpha</cite> for lowering the skewness of the
+weights.</p>
+<p>Let <cite>k_1</cite> be the number of zero weights and <cite>k_2</cite> is the number of weights
+that attain the maximum value in ‘weights’. For a given theta in the
+interval <cite>(k_2, n-k_1)</cite>, this functions finds the unique <cite>alpha</cite> such that</p>
+<blockquote>
+<div><cite>neff.ne(weights ** alpha) = theta</cite>.</div></blockquote>
+<p>The alpha is found by using the ‘L-BFGS-B’ optimization algorithm of
+<cite>scipy.optimize</cite> with initial value equal to <cite>a_init</cite>. We set upper and
+lower bounds to <cite>ALPHA_MIN</cite> and <cite>ALPHA_MAX</cite>, respectively. The maximum
+number of iterations is 15.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>weights</strong> (<em>ndarray</em><em>, </em><em>shape=</em><em>(</em><em>n</em><em>,</em><em>)</em>) – Set of weights</li>
+<li><strong>theta</strong> (<em>float</em>) – A positive value for the effective number of weights</li>
+<li><strong>a_init</strong> (<em>float</em>) – Initial guess for the optimization problem</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><cite>alpha</cite> value</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">float</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="popex.isampl.neff.correct_w">
+<code class="descclassname">popex.isampl.neff.</code><code class="descname">correct_w</code><span class="sig-paren">(</span><em>weights</em>, <em>ne_w_corr</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.isampl.neff.correct_w" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>correct_w</cite> is a function that lowers the skewness of the weights.</p>
+<p>In addition to the method <a class="reference internal" href="#popex.isampl.neff.alpha" title="popex.isampl.neff.alpha"><code class="xref py py-meth docutils literal notranslate"><span class="pre">alpha()</span></code></a> it computes whether the correction
+is possible and treats the exceptions accordingly.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>weights</strong> (<em>ndarray</em><em>, </em><em>shape=</em><em>(</em><em>n</em><em>,</em><em>)</em>) – Set of weights</li>
+<li><strong>ne_w_corr</strong> (<em>float</em>) – A positive value for the effective number of weights</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>w_corr</strong> – Corrected set of weights that is also normalized</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray, shape=(n,)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="popex.isampl.neff.ne">
+<code class="descclassname">popex.isampl.neff.</code><code class="descname">ne</code><span class="sig-paren">(</span><em>weights</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.isampl.neff.ne" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>ne</cite> computes the effective number of weights.</p>
+<p>Kish’s effective number of weights is computed as</p>
+<blockquote>
+<div><cite>n_e(w_1, …, w_n) = ( sum w_i )^2 / ( sum w_i^2 )</cite>.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>weights</strong> (<em>ndarray</em><em>, </em><em>shape=</em><em>(</em><em>n</em><em>,</em><em>)</em>) – Set of weights.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Effective number of weights.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="popex.isampl.neff.ne_gamma">
+<code class="descclassname">popex.isampl.neff.</code><code class="descname">ne_gamma</code><span class="sig-paren">(</span><em>weights</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.isampl.neff.ne_gamma" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>ne_gamma</cite> computes the effective number of weights for the skewness.</p>
+<p>The effective number of weights for estimating the skewness is computed as:</p>
+<blockquote>
+<div><cite>n_e(w_1, …, w_n) = ( sum w_i^2 )^3 / ( ( sum w_i^3 )^2 )</cite>.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>weights</strong> (<em>ndarray</em><em>, </em><em>shape=</em><em>(</em><em>n</em><em>,</em><em>)</em>) – Set of weights.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Effective number of weights (for the skewness).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="popex.isampl.neff.ne_var">
+<code class="descclassname">popex.isampl.neff.</code><code class="descname">ne_var</code><span class="sig-paren">(</span><em>weights</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.isampl.neff.ne_var" title="Permalink to this definition">¶</a></dt>
+<dd><p><cite>ne_var</cite> computes the effective number of weights for estimating the
+variance.</p>
+<p>The effective number of weights for an empirical estimation of the variance
+is computed as:</p>
+<blockquote>
+<div><cite>n_e(w_1, …, w_n) = ( sum w_i^2 )^2 / ( sum w_i^4 )</cite>.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>weights</strong> (<em>ndarray</em><em>, </em><em>shape=</em><em>(</em><em>n</em><em>,</em><em>)</em>) – Set of weights.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Effective number of weights (for the variance).</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
 <div class="section" id="module-popex.popex_objects">
 <span id="classes"></span><h2>Classes<a class="headerlink" href="#module-popex.popex_objects" title="Permalink to this headline">¶</a></h2>
-<p>‘popex_objects.py’ contains the PoPEx-specific class definitions.</p>
+<p><cite>popex_objects.py</cite> contains the PoPEx-specific class definitions.</p>
 <dl class="docutils">
 <dt>Main structure</dt>
 <dd><ul class="first last simple">

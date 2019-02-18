@@ -1,4 +1,5 @@
-""" 'popex_objects.py' contains the PoPEx-specific class definitions.
+# -*- coding: utf-8 -*-
+""" `popex_objects.py` contains the PoPEx-specific class definitions.
 
 Main structure
     - :class:`PoPEx`: Main class for any PoPEx simulation. It contains the
