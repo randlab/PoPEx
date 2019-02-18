@@ -12,7 +12,7 @@ Sampling definitions
 Classes associated to a model type
     - :class:`MType`: (`abstract`) Parent class for each map associated to a
       model type
-    - :class:`ContMType`: (inherits from :class:`MType`) Class for each map that
+    - :class:`ContParam`: (inherits from :class:`MType`) Class for each map that
       is associated to the model types but not to categories (e.g.
       `kld[imtype]`, `entropy[imtype]`)
     - :class:`CatMType`: (`abstract`, inherits from :class:`MType`) Parent class
@@ -278,7 +278,7 @@ class Problem:
             - hd_param_ind : m-tuple
                 For each instance in the model tuple, this variable defines the
                 hard conditioning INDICES (where to apply HD). `hd_param_ind[i]`
-                is an ``ndarray`` of `shape=(nhd_i,)
+                is an ``ndarray`` of `shape=(nhd_i,)`
             - hd_param_val : m-tuple
                 For each instance in the model tuple, this variable defines the
                 hard conditioning VALUES (what to imposed). `hd_param_val[i]` is
@@ -673,7 +673,7 @@ class Prediction:
     expected from that function. Any important result can be saved under
 
         | <path_res>$
-        |  ├-- solution
+        |  └-- solution
         |      └-- pred_<name>_modXXXXXX
 
 
@@ -686,7 +686,7 @@ class Prediction:
 
         Parameters:
             - popex : PoPEx
-                PoPEx main structure (cf `popex_objects.PoPEx`)
+                PoPEx main structure (cf :class:`popex.popex_objects.PoPEx`)
             - imod : int
                 Model index
 
@@ -694,7 +694,7 @@ class Prediction:
             None
     meth_w_pred : dict
         Defines the method used for computing the prediction weights (cf.
-        :meth:`utils.compute_w_lik`)
+        :meth:`popex.utils.compute_w_lik`)
     nw_min : float
         Minimum number of effective weights (= l_0)
     wfrac_pred : float
@@ -803,10 +803,10 @@ class CatMType(MType):
         List of size `ncat`. Each instance of the list is again a list
         of 2-tuples that define the value range for the category.
 
-        If `categories[i] = [(v1, v2), (v3, v4)]`, where `vi` are real values,
-        then the category `i` is defined by the union
+        If `categories[i] = [(v_1, v_2), (v_3, v_4)]`, where `v_j` are real
+        values, then the category `i` is defined by the union
 
-            `[v1, v2) U [v3, v4)`
+            `[v_1, v_2) U [v_3, v_4)`
 
     """
 
@@ -857,6 +857,7 @@ class CatMType(MType):
         """ Number of categories.
 
         Returns
+        -------
         int
             Number of categories in `categories`
         """
@@ -894,7 +895,7 @@ class CatProb(CatMType):
 
     Notes
     -----
-        The shape of `param_val` is `(nparam, ncat)`.
+        The shape of `param_val` is `shape=(nparam, ncat)`.
     """
 
     def __setattr__(self, key, value):
@@ -922,7 +923,7 @@ class CatParam(CatMType):
 
     Notes
     -----
-        The shape of `param_val` and `param_cat` is `(nparam,)`.
+        The shape of `param_val` and `param_cat` is `shape=(nparam,)`.
 
     """
 

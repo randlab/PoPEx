@@ -861,7 +861,7 @@ model chain and any corresponding probability measures.</li>
 <dd><ul class="first last simple">
 <li><a class="reference internal" href="#popex.popex_objects.MType" title="popex.popex_objects.MType"><code class="xref py py-class docutils literal notranslate"><span class="pre">MType</span></code></a>: (<cite>abstract</cite>) Parent class for each map associated to a
 model type</li>
-<li><code class="xref py py-class docutils literal notranslate"><span class="pre">ContMType</span></code>: (inherits from <a class="reference internal" href="#popex.popex_objects.MType" title="popex.popex_objects.MType"><code class="xref py py-class docutils literal notranslate"><span class="pre">MType</span></code></a>) Class for each map that
+<li><a class="reference internal" href="#popex.popex_objects.ContParam" title="popex.popex_objects.ContParam"><code class="xref py py-class docutils literal notranslate"><span class="pre">ContParam</span></code></a>: (inherits from <a class="reference internal" href="#popex.popex_objects.MType" title="popex.popex_objects.MType"><code class="xref py py-class docutils literal notranslate"><span class="pre">MType</span></code></a>) Class for each map that
 is associated to the model types but not to categories (e.g.
 <cite>kld[imtype]</cite>, <cite>entropy[imtype]</cite>)</li>
 <li><a class="reference internal" href="#popex.popex_objects.CatMType" title="popex.popex_objects.CatMType"><code class="xref py py-class docutils literal notranslate"><span class="pre">CatMType</span></code></a>: (<cite>abstract</cite>, inherits from <a class="reference internal" href="#popex.popex_objects.MType" title="popex.popex_objects.MType"><code class="xref py py-class docutils literal notranslate"><span class="pre">MType</span></code></a>) Parent class
@@ -878,22 +878,27 @@ for the representation of categorized parameter values (e.g.
 <dl class="class">
 <dt id="popex.popex_objects.CatMType">
 <em class="property">class </em><code class="descclassname">popex.popex_objects.</code><code class="descname">CatMType</code><span class="sig-paren">(</span><em>dtype_val='float64'</em>, <em>param_val=None</em>, <em>categories=None</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.CatMType" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class is the parent of any quantity associated to a model type and
-some categories.</p>
-<p>INSTANCE ATTRIBUTES
-param_val:      (nparam x ? ndarray) Values associated to the parameters
-categories:     (list) List of size ncat. Each item is a list of 2-tuples</p>
+<dd><p>This class is the abstract parent of any quantity associated to a
+categorical model type.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dtype_val</strong> (<em>str</em>) – Type of the <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> values (eg. ‘int8’, ‘float32’, ‘float64’, etc)</li>
+<li><strong>param_val</strong> (<em>ndarray</em>) – Values associated to the parameters</li>
+<li><strong>categories</strong> (<em>list</em>) – <p>List of size <cite>ncat</cite>. Each instance of the list is again a list
+of 2-tuples that define the value range for the category.</p>
+<p>If <cite>categories[i] = [(v_1, v_2), (v_3, v_4)]</cite>, where <cite>v_j</cite> are real
+values, then the category <cite>i</cite> is defined by the union</p>
 <blockquote>
-<div><p>that define the value range for the category.
-EXAMPLE: If categories[i] = [(v1, v2), (v3, v4)], where vi
-are real numbers, then the category i is defined by all the
-values contained in the union</p>
-<blockquote>
-<div>[v1, v2) U [v3, v4)</div></blockquote>
-</div></blockquote>
-<p>INSTANCE PROPERTIES
-nparam:         (int) Number of parameters
-ncat:           (int) Number of categories</p>
+<div><cite>[v_1, v_2) U [v_3, v_4)</cite></div></blockquote>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="popex.popex_objects.CatMType.ncat">
 <code class="descname">ncat</code><a class="headerlink" href="#popex.popex_objects.CatMType.ncat" title="Permalink to this definition">¶</a></dt>
@@ -902,7 +907,9 @@ ncat:           (int) Number of categories</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(int) Number of categories in ‘categories</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Number of categories in <cite>categories</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
 </tr>
 </tbody>
 </table>
@@ -914,26 +921,11 @@ ncat:           (int) Number of categories</p>
 <dt id="popex.popex_objects.CatParam">
 <em class="property">class </em><code class="descclassname">popex.popex_objects.</code><code class="descname">CatParam</code><span class="sig-paren">(</span><em>dtype_val='float64'</em>, <em>param_val=None</em>, <em>categories=None</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.CatParam" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class is used to define a categorized 1-dimensional parameter map
-that is associated to a model type. At the same time, a category indicator
-array will be generated. This array can be used to learn the category of
-each value in param_val.</p>
-<p>INSTANCE ATTRIBUTES
-param_val:      (nparam, ndarray) Values associated to the parameters
-categories:     (list) List of size ncat. Each item is a list of 2-tuples</p>
-<blockquote>
-<div><p>that define the value range for the category.
-EXAMPLE: If categories[i] = [(v1, v2), (v3, v4)], where vi
-are real numbers, then the category i is defined by all the
-values contained in the union</p>
-<blockquote>
-<div>[v1, v2) U [v3, v4)</div></blockquote>
-</div></blockquote>
-<p>INSTANCE PROPERTIES
-param_cat:      (nparam, ndarray) Category index of the values in</p>
-<blockquote>
-<div>‘param_val’</div></blockquote>
-<p>nparam:         (int) Number of parameters
-ncat:           (int) Number of categories</p>
+that is associated to a model type (e.g. <cite>model</cite>, etc). The categories of
+each model parameter in <cite>param_val</cite> is indicated in <cite>param_cat</cite>. These
+categories are automatically updated if <cite>param_val</cite> or <cite>categories</cite> change.</p>
+<p class="rubric">Notes</p>
+<p>The shape of <cite>param_val</cite> and <cite>param_cat</cite> is <cite>shape=(nparam,)</cite>.</p>
 <dl class="attribute">
 <dt id="popex.popex_objects.CatParam.param_cat">
 <code class="descname">param_cat</code><a class="headerlink" href="#popex.popex_objects.CatParam.param_cat" title="Permalink to this definition">¶</a></dt>
@@ -942,8 +934,9 @@ ncat:           (int) Number of categories</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(nparam, ndarray) Category index of the values in
-‘param_val’</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Category indicators of the values in <cite>param_val</cite>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">ndarray, shape=(nparam,)</td>
 </tr>
 </tbody>
 </table>
@@ -954,76 +947,75 @@ ncat:           (int) Number of categories</p>
 <dl class="class">
 <dt id="popex.popex_objects.CatProb">
 <em class="property">class </em><code class="descclassname">popex.popex_objects.</code><code class="descname">CatProb</code><span class="sig-paren">(</span><em>dtype_val='float64'</em>, <em>param_val=None</em>, <em>categories=None</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.CatProb" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class is used to define multiple parameter maps that are
-associated to categories within a given model type.</p>
-<p>INSTANCE ATTRIBUTES
-param_val:      (nparam x ncat ndarray) Values associated to the parameters</p>
-<blockquote>
-<div>and the categories.</div></blockquote>
-<dl class="docutils">
-<dt>categories:     (list) List of size ncat. Each item is a list of 2-tuples</dt>
-<dd><p class="first">that define the value range for the category.
-EXAMPLE: If categories[i] = [(v1, v2), (v3, v4)], where vi
-are real numbers, then the category i is defined by all the
-values contained in the union</p>
-<blockquote class="last">
-<div>[v1, v2) U [v3, v4)</div></blockquote>
-</dd>
-</dl>
-<p>INSTANCE PROPERTIES
-nparam:         (int) Number of parameters
-ncat:           (int) Number of categories</p>
+<dd><p>This class is used to define a map of continuous values for each
+category, where each value is associated to a model parameter (e.g. <cite>p_cat</cite>,
+<cite>q_cat</cite>, etc.).</p>
+<p class="rubric">Notes</p>
+<p>The shape of <cite>param_val</cite> is <cite>shape=(nparam, ncat)</cite>.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="popex.popex_objects.ContParam">
 <em class="property">class </em><code class="descclassname">popex.popex_objects.</code><code class="descname">ContParam</code><span class="sig-paren">(</span><em>dtype_val='float64'</em>, <em>param_val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.ContParam" title="Permalink to this definition">¶</a></dt>
-<dd><p>This class is used to define a continuous 1-dimensional parameter map
-that is associated to a model type.</p>
-<p>INSTANCE ATTRIBUTES
-param_val:      (nparam, ndarray) 1-dimensional parameter array</p>
-<p>INSTANCE PROPERTIES
-nparam:         (int) Number of parameters in self.param_val</p>
+<dd><p>This class is used to define a map of continuous values where each value
+is associated to a model parameter (e.g. <cite>entropy</cite>, <cite>kld</cite>, etc.).</p>
+<p class="rubric">Notes</p>
+<p>The shape of <cite>param_val</cite> is <cite>(nparam,)</cite>.</p>
 </dd></dl>
 
 <dl class="class">
 <dt id="popex.popex_objects.Learning">
 <em class="property">class </em><code class="descclassname">popex.popex_objects.</code><code class="descname">Learning</code><a class="headerlink" href="#popex.popex_objects.Learning" title="Permalink to this definition">¶</a></dt>
-<dd><p>Defines a learning scheme that is dedicated to particular training
-sets. It is supposed that there is a choice between ‘evaluating the exact
-answer’ (which is potentially very expensive) or ‘predicting the
-answer by a machine learning scheme’ (which should be very fast). The
-function ‘compute_p_eval_for’ computes a probability that expresses if the
-value should be evaluated exactly. The two extreme probabilitys thus
-signify:</p>
+<dd><p><cite>Learning</cite> defines an abstract parent class for a learning scheme.</p>
+<p>Let’s assume that we want to define a learning scheme that predicts the
+log-likelihood of a model. In this case we define an explicite sub-class
+of <code class="docutils literal notranslate"><span class="pre">Learning</span></code> and provide implementations of the methods</p>
 <blockquote>
-<div>0: Value will be predicted
-1: Value must be evaluated exactly.</div></blockquote>
-<p>INSTANCE METHODS
-train(…)          (abstract) Trains the learning scheme
-compute_p_eval_for(…) (abstract) Returns the probability with which the</p>
+<div><ul class="simple">
+<li><a class="reference internal" href="#popex.popex_objects.Learning.train" title="popex.popex_objects.Learning.train"><code class="xref py py-meth docutils literal notranslate"><span class="pre">train()</span></code></a></li>
+<li><a class="reference internal" href="#popex.popex_objects.Learning.compute_p_eval_for" title="popex.popex_objects.Learning.compute_p_eval_for"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_p_eval_for()</span></code></a></li>
+<li><a class="reference internal" href="#popex.popex_objects.Learning.learn_value_of" title="popex.popex_objects.Learning.learn_value_of"><code class="xref py py-meth docutils literal notranslate"><span class="pre">learn_value_of()</span></code></a></li>
+</ul>
+</div></blockquote>
+<p>It is assumed that there is a choice between ‘evaluating the exact
+answer’ (which is very expensive) or ‘predicting the  answer by a machine
+learning scheme’ (which should be very fast). The learning scheme undergoes
+the following main steps</p>
 <blockquote>
-<div>value of a given model is evaluated exactly</div></blockquote>
-<dl class="docutils">
-<dt>learn_value_of(…) (abstract) Predicts the value of a model based on the</dt>
-<dd>existing learning scheme</dd>
-</dl>
+<div><ul class="simple">
+<li>Update the learning scheme regularly by using the function
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">trian()</span></code> (cf. <cite>upd_ls_freq</cite> in <cite>algorithm.run_popex_mp</cite>). Note
+that here you can choose to only use likelihood values that have
+effectively been computed (cf. <cite>PoPEx.cmp_log_p_lik</cite>).</li>
+<li>For a given instance compute a probability <cite>p in [0,1]</cite> with which
+the log-likelihood is predicted or evaluated (cf.
+<a class="reference internal" href="#popex.popex_objects.Learning.compute_p_eval_for" title="popex.popex_objects.Learning.compute_p_eval_for"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_p_eval_for()</span></code></a>) and then the value eventually is predicted
+(cf. <a class="reference internal" href="#popex.popex_objects.Learning.learn_value_of" title="popex.popex_objects.Learning.learn_value_of"><code class="xref py py-meth docutils literal notranslate"><span class="pre">learn_value_of()</span></code></a>).</li>
+</ul>
+</div></blockquote>
+<p class="rubric">Notes</p>
+<p>In the PoPEx framework this can be used to learn the log-likelihood
+values for each model (=value of interest). In this regard, predicting a
+value rather than computing it can considerably improve the overall
+computational time.</p>
 <dl class="method">
 <dt id="popex.popex_objects.Learning.compute_p_eval_for">
-<code class="descname">compute_p_eval_for</code><span class="sig-paren">(</span><em>instance</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.Learning.compute_p_eval_for" title="Permalink to this definition">¶</a></dt>
+<code class="descname">compute_p_eval_for</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.Learning.compute_p_eval_for" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes and return a probability value in [0, 1] that determines
-whether a model should be evaluated exactly. The two extreme confidence
-values signify the following:</p>
+whether a model should be evaluated exactly.</p>
+<p>The two extreme confidence values signify:</p>
 <blockquote>
-<div>0: Value can be learned from the learning scheme
-1: Value should be evaluated exactly.</div></blockquote>
+<div><cite>p=0</cite>: Value can be learned from the learning scheme
+<cite>p=1</cite>: Value should be evaluated exactly.</div></blockquote>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>instance</strong> – ( ? ) Instance corresponding to the data set</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<em>m-tuple</em>) – Tuple of <code class="docutils literal notranslate"><span class="pre">Mtype</span></code> instances that define the new model</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">(float) Probability value in [0, 1]</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Probability value in <cite>[0, 1]</cite></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
 </tr>
 </tbody>
 </table>
@@ -1031,17 +1023,21 @@ values signify the following:</p>
 
 <dl class="method">
 <dt id="popex.popex_objects.Learning.learn_value_of">
-<code class="descname">learn_value_of</code><span class="sig-paren">(</span><em>instance</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.Learning.learn_value_of" title="Permalink to this definition">¶</a></dt>
-<dd><p>Uses the existing learning scheme to learn the value of interest
-corresponding to a given model. This function should raise an error if
-there is no existing learning scheme.</p>
+<code class="descname">learn_value_of</code><span class="sig-paren">(</span><em>model</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.Learning.learn_value_of" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the existing learning scheme to learn the value of interest for
+an instance.</p>
+<p class="rubric">Notes</p>
+<p>This function should raise an error if there is no existing learning
+scheme.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>instance</strong> – ( ? ) Instance corresponding to the data set</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>model</strong> (<em>m-tuple</em>) – Tuple of <code class="docutils literal notranslate"><span class="pre">Mtype</span></code> instances that define the new model</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">( ? ) Predicted value</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Predicted log-likelihood value</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">float</td>
 </tr>
 </tbody>
 </table>
@@ -1049,13 +1045,18 @@ there is no existing learning scheme.</p>
 
 <dl class="method">
 <dt id="popex.popex_objects.Learning.train">
-<code class="descname">train</code><span class="sig-paren">(</span><em>data_set</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.Learning.train" title="Permalink to this definition">¶</a></dt>
+<code class="descname">train</code><span class="sig-paren">(</span><em>popex</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.Learning.train" title="Permalink to this definition">¶</a></dt>
 <dd><p>This method creates a learning scheme.</p>
+<p>The learning scheme can be saved as class parameter.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">None</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>popex</strong> (<a class="reference internal" href="#popex.popex_objects.PoPEx" title="popex.popex_objects.PoPEx"><em>PoPEx</em></a>) – PoPEx main structure (cf <cite>popex_objects.PoPEx</cite>)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"></td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">None</td>
 </tr>
 </tbody>
 </table>
@@ -1067,10 +1068,18 @@ there is no existing learning scheme.</p>
 <dt id="popex.popex_objects.MType">
 <em class="property">class </em><code class="descclassname">popex.popex_objects.</code><code class="descname">MType</code><span class="sig-paren">(</span><em>dtype_val='float64'</em>, <em>param_val=None</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.MType" title="Permalink to this definition">¶</a></dt>
 <dd><p>This class is the parent of any quantity associated to a model type.</p>
-<p>INSTANCE ATTRIBUTES
-param_val:      (nparam x ? ndarray) Values associated to the parameters</p>
-<p>INSTANCE PROPERTIES
-nparam:         (int) Number of parameters</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>dtype_val</strong> (<em>str</em>) – Type of the <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> values (eg. ‘int8’, ‘float32’, ‘float64’, etc)</li>
+<li><strong>param_val</strong> (<em>ndarray</em>) – Values associated to the parameters</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 <dl class="attribute">
 <dt id="popex.popex_objects.MType.nparam">
 <code class="descname">nparam</code><a class="headerlink" href="#popex.popex_objects.MType.nparam" title="Permalink to this definition">¶</a></dt>
@@ -1079,7 +1088,9 @@ nparam:         (int) Number of parameters</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">(int) Number of values in ‘param_val’</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Number of values in <cite>param_val</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Return type:</th><td class="field-body">int</td>
 </tr>
 </tbody>
 </table>
@@ -1213,30 +1224,58 @@ generation of the model</li>
 <em class="property">class </em><code class="descclassname">popex.popex_objects.</code><code class="descname">Prediction</code><span class="sig-paren">(</span><em>compute_pred=None</em>, <em>meth_w_pred=None</em>, <em>nw_min=None</em>, <em>wfrac_pred=1.0</em><span class="sig-paren">)</span><a class="headerlink" href="#popex.popex_objects.Prediction" title="Permalink to this definition">¶</a></dt>
 <dd><p>Defines a prediction that should be computed based on an existing
 PoPEx instance.</p>
-<p>INSTANCE ATTRIBUTES
-compute_pred        (callable) Runs the prediction of a model m</p>
+<p>The user must provide function definitions for <cite>compute_pred</cite> that actually
+implements the prediction operator. Note that there is no return value
+expected from that function. Any important result can be saved under</p>
 <blockquote>
-<div>(for more details about the callable instance variables see
-‘INSTANCE ATTRIBUTE DETAILS AND RECOMMENDATIONS’ below)</div></blockquote>
-<dl class="docutils">
-<dt>meth_w_hd:          (dict) Defines the method used for weighting the</dt>
-<dd>predictions (see ‘utils.compute_w_lik’)</dd>
-</dl>
-<p>nw_min              (float) Minimum number of effective weights
-wfrac_pred          (float) Number in (0,1] defining the fraction of the</p>
-<blockquote>
-<div>total weight to be used for the prediction</div></blockquote>
-<p>INSTANCE ATTRIBUTE DETAILS AND RECOMMENDATIONS
-(1) compute_pred(popex, imod)
-—————————–</p>
-<blockquote>
-<div><p>This function computes the prediction of a given model. There is no
-return value expected so that the function must save important results
-at</p>
-<p>param: popex:   (PoPEx) (see ‘popex_objects.PoPEx’)
-param: imod:    (int) Simulation index
-return: None</p>
+<div><div class="line-block">
+<div class="line">&lt;path_res&gt;$</div>
+<div class="line-block">
+<div class="line">└– solution</div>
+<div class="line-block">
+<div class="line">└– pred_&lt;name&gt;_modXXXXXX</div>
+</div>
+</div>
+</div>
 </div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>compute_pred</strong> (<em>function</em>) – <p>Computes the prediction for a given model.</p>
+<p><cite>compute_pred(popex, imod)</cite></p>
+<dl class="docutils">
+<dt>Parameters:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>popex <span class="classifier-delimiter">:</span> <span class="classifier">PoPEx</span></dt>
+<dd>PoPEx main structure (cf <a class="reference internal" href="#popex.popex_objects.PoPEx" title="popex.popex_objects.PoPEx"><code class="xref py py-class docutils literal notranslate"><span class="pre">popex.popex_objects.PoPEx</span></code></a>)</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>imod <span class="classifier-delimiter">:</span> <span class="classifier">int</span></dt>
+<dd>Model index</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt>Returns:</dt>
+<dd>None</dd>
+</dl>
+</li>
+<li><strong>meth_w_pred</strong> (<em>dict</em>) – Defines the method used for computing the prediction weights (cf.
+<a class="reference internal" href="#popex.utils.compute_w_lik" title="popex.utils.compute_w_lik"><code class="xref py py-meth docutils literal notranslate"><span class="pre">popex.utils.compute_w_lik()</span></code></a>)</li>
+<li><strong>nw_min</strong> (<em>float</em>) – Minimum number of effective weights (= l_0)</li>
+<li><strong>wfrac_pred</strong> (<em>float</em>) – Number in (0,1] defining the fraction of the total weight to be used for
+the prediction. If <cite>p=1</cite>, all predictions for any model that has
+non-zero weight is computed. If <cite>p&lt;1</cite> we take the minimum number of
+weight to cover a ratio of <cite>p</cite> of the total sum of weights.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="class">
@@ -1267,7 +1306,7 @@ conditioning data points is used.</p>
 <dt>hd_param_ind <span class="classifier-delimiter">:</span> <span class="classifier">m-tuple</span></dt>
 <dd>For each instance in the model tuple, this variable defines the
 hard conditioning INDICES (where to apply HD). <cite>hd_param_ind[i]</cite>
-is an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> of <a href="#id1"><span class="problematic" id="id2">`</span></a>shape=(nhd_i,)</dd>
+is an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> of <cite>shape=(nhd_i,)</cite></dd>
 </dl>
 </li>
 <li><dl class="first docutils">
@@ -1400,8 +1439,8 @@ implementation will be used (see remark below).</p>
 <dd>Tuple of the hard conditioning probability values for a given
 model. Each probability value describes the prior probability of
 observing the category of the model value at the corresponding
-conditioning location.
-hd_p_gen[i] is an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> of <cite>shape=(nhd_i,)</cite></dd>
+conditioning location. <cite>hd_p_gen[i]</cite> is an <code class="docutils literal notranslate"><span class="pre">ndarray</span></code> of
+<cite>shape=(nhd_i,)</cite></dd>
 </dl>
 </li>
 <li><dl class="first docutils">
