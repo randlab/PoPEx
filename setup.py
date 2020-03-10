@@ -22,7 +22,7 @@ install_requires = [p_req for p_req in tests_require]
 
 
 _setup_data = {
-    'name':                 'spo_mds',
+    'name':                 'popex',
     'version':              '0.1.0',
     'description':          'PoPEx sampling package',
     'long_description':     long_description,
