@@ -25,8 +25,8 @@ _setup_data = {
     'name':                 'popex',
     'version':              '1.0.1',
     'description':          'PoPEx sampling package',
-    'long_description':     long_description,
-    'long_description_content_type'='text/markdown',
+    'long_description':      long_description,
+    'long_description_content_type': 'text/markdown',
 
     'author':               'Christoph Jaeggli',
     'author_email':         'christoph.jaeggli@gmail.com',
