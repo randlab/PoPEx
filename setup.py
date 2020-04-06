@@ -17,13 +17,11 @@ with open("README.md", "r") as file_handle:
 
 
 # Generic requirements
-tests_require = ['numpy']
-install_requires = [p_req for p_req in tests_require]
-
+install_requires = ['numpy', 'scipy']
 
 _setup_data = {
     'name':                 'popex',
-    'version':              '1.0.1',
+    'version':              '1.0.0',
     'description':          'PoPEx sampling package',
     'long_description':      long_description,
     'long_description_content_type': 'text/markdown',
@@ -35,8 +33,6 @@ _setup_data = {
     'license':              'MIT',
 
     'packages':             find_packages(),
-    'test_suite':           'setup.test_suite',
-    'tests_require':        tests_require,
     'install_requires':     install_requires,
 }
 
