@@ -68,7 +68,7 @@ from popex.cnsts import NP_MIN_TOL, RECMP_P_CAT_FREQ
 
 def run_popex_mp(pb, path_res, path_q_cat,
                  ncmax=(20,), nmp=1, nmax=1000,
-                 upd_hdmap_freq=1, upd_ls_freq=-1, si_freq=-1):
+                 upd_hdmap_freq=1, upd_ls_freq=-1, si_freq=-1, restart_point=None):
     """ `run_popex_mp` is the main implementation of the PoPEx algorithm.
 
     The algorithm expands a set of models until the defined stopping condition
@@ -108,11 +108,14 @@ def run_popex_mp(pb, path_res, path_q_cat,
     upd_hdmap_freq : int
         Defines the frequency for updating the HD maps (`kld` and `p_cat`)
     upd_ls_freq : int
-         Defines the frequency for updating the learning scheme (-1 for no
-         update)
+        Defines the frequency for updating the learning scheme (-1 for no
+        update)
     si_freq : int
-         Defines the frequency of saving intermediate states (-1 for no
-         intermediate saves)
+        Defines the frequency of saving intermediate states (-1 for no
+        intermediate saves)
+    restart_point : PoPEx
+        If specified, restarts algorithm using the given PoPEx object
+        and continues sampling
 
 
     Returns
@@ -134,7 +137,9 @@ def run_popex_mp(pb, path_res, path_q_cat,
     print('    ncmax   = {!r}'.format(ncmax))
     print('    nmax    = {:>6d}'.format(nmax))
     print('    nmp     = {:>6d}'.format(nmp))
-    print("    hd_meth = '{}'\n".format(pb.meth_w_hd['name']))
+    print("    hd_meth = '{}'".format(pb.meth_w_hd['name']))
+    if restart_point is not None:
+        print("    restarting from iteration = {:>6d}\n".format(restart_point.nmod))
 
     # Generate 'model' folder
     try:
@@ -157,6 +162,9 @@ def run_popex_mp(pb, path_res, path_q_cat,
     p_cat = deepcopy(q_cat)
     kld = utl.compute_kld(p_cat, q_cat)
 
+
+
+
     # Main PoPEx initialisations
     stop = False
     isim = 0
@@ -174,7 +182,7 @@ def run_popex_mp(pb, path_res, path_q_cat,
                 # Create and start a new working process
                 args = (deepcopy(pb), deepcopy(popex), deepcopy(isim),
                         hd_prior_param_ind, hd_prior_param_val,
-                        deepcopy(kld), deepcopy(p_cat), q_cat)
+                        deepcopy(kld), deepcopy(p_cat), q_cat, restart_point)
                 proc_mngr.append(pool.apply_async(_run_process, args))
                 isim += 1
 
@@ -278,7 +286,7 @@ def run_popex_mp(pb, path_res, path_q_cat,
 
 def _run_process(pb, popex, imod,
                  hd_prior_param_ind, hd_prior_param_val,
-                 kld, p_cat, q_cat):
+                 kld, p_cat, q_cat, restart_point):
     """ `_run_process` is the method that can be used to sample a new model in
     the PoPEx procedure. It mainly generates a new model and computes the
     corresponding log-likelihood value.
@@ -302,6 +310,8 @@ def _run_process(pb, popex, imod,
         Weighted category probabilities
     q_cat : m-tuple
         Prior category probabilities
+    restart_point : PoPEx
+        PoPEx object from which the sampling will restart
 
 
     Returns
@@ -322,6 +332,10 @@ def _run_process(pb, popex, imod,
         Log-sampling probability of the model
 
     """
+
+    if restart_point is not None:
+        if imod < restart_point.nmod:
+            return _read_iteration(restart_point, imod)
 
     np.random.seed(pb.seed + imod)
     meth_w_hd = pb.meth_w_hd
@@ -363,6 +377,52 @@ def _run_process(pb, popex, imod,
     # Compute sampling ratio
     log_p_pri = pb.compute_log_p_pri(model, hd_prior, hd_i_param_ind)
     log_p_gen = pb.compute_log_p_gen(model, hd_generation, hd_param_ind)
+
+    return imod, model, ncmod, log_p_lik, cmp_log_p_lik, log_p_pri, log_p_gen
+
+def _read_iteration(restart_point, imod):
+    """ `_read_iteration` reads a model and its properties
+    from PoPEx object given the iteration number.
+    Its output its the some as _run_process.
+    It does not write hd information though.
+
+
+    Parameters
+    ----------
+    restart_point : PoPEx
+        The PoPEx object which holds data
+    imod : int
+        Model index
+
+
+    Returns
+    -------
+    imod : int
+        Model index
+    model : m-tuple
+        Tuple of ``Mtype`` instances that define the new model
+    ncmod : m-tuple
+        Number of hard conditioning for each model type
+    log_p_lik : float
+        Log-likelihood value
+    cmp_log_p_lik : bool
+        Log-likelihood was computed (True) or predicted (False)
+    log_p_pri : float
+        Log-prior probability of the model
+    log_p_gen : float
+        Log-sampling probability of the model
+
+    """
+
+    p = restart_point
+
+    with open(p.path_res + p.model[imod], 'rb') as file_handle:
+        model = pickle.load(file_handle)
+    ncmod = p.nc[imod]
+    log_p_lik = p.log_p_lik[imod]
+    cmp_log_p_lik = p.cmp_log_p_lik[imod]
+    log_p_pri = p.log_p_pri[imod]
+    log_p_gen = p.log_p_gen[imod]
 
     return imod, model, ncmod, log_p_lik, cmp_log_p_lik, log_p_pri, log_p_gen
 
