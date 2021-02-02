@@ -175,7 +175,7 @@ def run_popex_mp(pb, path_res, path_q_cat,
     print('    > sample space...', end='')
 
     # Start PoPEx sampling by a pool of working processes
-    with multiprocessing.Pool(processes=nmp, maxtasksperchild=100) as pool:
+    with multiprocessing.Pool(processes=nmp, maxtasksperchild=1) as pool:
         while not stop:
             nmngr = len(proc_mngr)
             if nmngr < nmp and popex.nmod + nmngr < nmax:

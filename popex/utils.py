@@ -658,6 +658,11 @@ def compute_w_lik(popex, meth=None):
 
             `L(m) ~ 1 / ( 1+sqrt(-'log_p_lik') )`.
 
+        (f) Soft likelihood (`meth={'name': 'soft', 'fsigma': fsigma}`)
+
+            `L(m) ~ exp('log_p_lik'/fsigma^2)`.
+
+
     As mentioned above, these techniques aim to unskew the likelihood values.
 
 
@@ -752,6 +757,14 @@ def compute_w_lik(popex, meth=None):
 
         # Compute 1/( 1-log( abs(w)^1/2 ) )
         w_lik = 1 / (1+np.sqrt(-log_w_lik))
+
+    elif name == 'soft':
+        log_soft_lik = log_w_lik/(meth['fsigma']**2)
+        log_soft_lik -= np.max(log_soft_lik)
+        
+        w_lik = np.zeros_like(log_soft_lik)
+        nnz_ind = log_soft_lik >= np.log(NP_MIN_TOL)
+        w_lik[nnz_ind] = np.exp(log_soft_lik[nnz_ind])
 
     else:
         raise ValueError('\nUnknown method "{}" for computing weights'
