@@ -822,6 +822,7 @@ def compute_w_pred(popex, nw_min=0, ibnd=-1, meth=None):
 
             - ``'name'`` : Name of the method (`str`)
             - ``'pow'`` : Power for method (c) (`float`)
+            - ``'fsigma``: f-sigma parametrer for method (f) 'soft' (`float`)
 
 
     Returns
