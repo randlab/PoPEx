@@ -1,7 +1,10 @@
 bleach==3.1.4
+bump2version==1.0.1
+bumpversion==0.6.0
 certifi==2020.4.5.1
 cffi==1.14.0
 chardet==3.0.4
+colorama==0.4.4
 cryptography==3.2
 docutils==0.16
 idna==2.9
@@ -14,10 +17,11 @@ Pygments==2.6.1
 readme-renderer==25.0
 requests==2.23.0
 requests-toolbelt==0.9.1
+rfc3986==1.4.0
 SecretStorage==3.1.2
 six==1.14.0
 tqdm==4.45.0
-twine==3.1.1
+twine==3.3.0
 urllib3==1.25.8
 webencodings==0.5.1
 zipp==3.1.0
