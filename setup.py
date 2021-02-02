@@ -21,7 +21,7 @@ install_requires = ['numpy', 'scipy']
 
 _setup_data = {
     'name':                 'popex',
-    'version':              '1.1.1',
+    'version':              '1.2.0',
     'description':          'PoPEx sampling package',
     'long_description':      long_description,
     'long_description_content_type': 'text/markdown',
