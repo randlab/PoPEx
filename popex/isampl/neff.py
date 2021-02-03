@@ -54,32 +54,13 @@ def ne(weights):
     # Raise numpy over-/underflow errors
     old_settings = np.seterr(over='raise', under='raise')
 
-    # Treat extreme values
-    w = np.array(weights)
-    try:
-        w_sq = w ** 2
-    except FloatingPointError as err:
-        first_word = str(err).split()[0]
-        if first_word == 'overflow':
-            w[w >= NP_MIN_TOL] /= np.max(w)
-            w[w < NP_MIN_TOL] = 0
-        elif first_word == 'underflow':
-            w[w < NP_MIN_TOL] = 0
-        else:
-            raise FloatingPointError(err)
-        w_sq = w ** 2
-
-    # Treat zero division
-    if np.sum(w_sq) < NP_MIN_TOL:
-        w = np.ones_like(w)
-        w_sq = w
-        warnings.warn(msg.warn1001)
+    result = (np.sum(w) ** 2) / np.sum(w_sq)
 
     # Set numpy settings back
     np.seterr(**old_settings)
 
     # Return effective number of weights
-    return (np.sum(w) ** 2) / np.sum(w_sq)
+    return result
 
 
 def ne_var(weights):
