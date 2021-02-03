@@ -9,6 +9,7 @@ NP_MIN_TOL = 1e-12
 # -----------------------
 ALPHA_MIN = 0.01
 ALPHA_MAX = 100
+FSIGMA_MIN = 1
 
 # Job control
 # -----------

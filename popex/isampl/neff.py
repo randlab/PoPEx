@@ -28,7 +28,8 @@ import warnings
 import numpy as np
 from scipy import optimize
 import popex.popex_messages as msg
-from popex.cnsts import NP_MIN_TOL, ALPHA_MIN, ALPHA_MAX
+from popex.cnsts import NP_MIN_TOL, ALPHA_MIN, ALPHA_MAX, FSIGMA_MIN
+from popex import utils
 
 
 def ne(weights):
@@ -165,7 +166,7 @@ def alpha(weights, theta, a_init=1):
     The alpha is found by using the 'L-BFGS-B' optimization algorithm of
     `scipy.optimize` with initial value equal to `a_init`. We set upper and
     lower bounds to `ALPHA_MIN` and `ALPHA_MAX`, respectively. The maximum
-    number of iterations is 15.
+    number of iterations is 10.
 
     Parameters
     ----------
@@ -218,6 +219,53 @@ def alpha(weights, theta, a_init=1):
     # Set back to old settings
     np.seterr(**old_settings)
     return a_ret
+
+
+def find_fsigma(popex, theta, fsigma_max, l_reg=0):
+    """ `fsigma` computes the best `fsigma` for soft likelihood.
+
+
+    Let `k_1` be the number of zero weights and `k_2` is the number of weights
+    that attain the maximum value in 'weights'. For a given theta in the
+    interval `(k_2, n-k_1)`, this functions finds the unique `alpha` such that
+
+        `neff.ne(weights(soft_lik(log_p_lik, fsigma)) = theta`.
+
+    The f_sigma is found by using the 'L-BFGS-B' optimization algorithm of
+    `scipy.optimize` with initial value equal to `f_sigma_init`. We set
+    and lower bound to `FSIGMA_MIN`, upper bound specified as argument.
+
+    Parameters
+    ----------
+    popex : popex object
+        Popex object
+    theta : float
+        A positive value for the effective number of weights
+    fsigma_max : float
+        Value greater than 1, upper bound for fsigma
+
+
+    Returns
+    -------
+    float
+        `fsigma` value
+
+    """
+    # Set numpy error behaviour
+    old_settings = np.seterr(over='raise', under='raise')
+
+    # Define optimization function
+    def opt_fun(fsigma):
+        weights = utils.compute_w_pred(popex=popex, meth={'name':'soft', 'fsigma':fsigma})
+        return (ne(weights) - theta) ** 2 + l_reg*fsigma
+
+    # Minimize optimization function
+    opt_obj = optimize.minimize_scalar(opt_fun,
+                                method='Bounded',
+                                bounds=[FSIGMA_MIN, fsigma_max],)
+
+    np.seterr(**old_settings)
+    return opt_obj['x']
 
 
 def correct_w(weights, ne_w_corr):
