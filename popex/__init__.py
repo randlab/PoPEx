@@ -1,4 +1,4 @@
 """ The popex package is an implementation of the PoPEx algorithm. For each new
 problem, the user has to create a fully defined instance of the Problem() class.
 """
-__version__ = '1.2.0'
+__version__ = '1.3.0'
