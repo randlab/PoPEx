@@ -831,10 +831,11 @@ def compute_w_pred(popex, nw_min=0, ibnd=-1, meth=None):
         Array of predictive weights
 
     """
-    if meth['name'] == 'soft_optimized':
-        fsigma = isampl.find_fsigma(popex=popex, theta=meth['nw_min'], fsigma_max=meth['fsigma_max'], l_reg=0)
-        print(f'Chosen sigma:{fsigma}')
-        meth = {'name':'soft', 'fsigma':fsigma}
+    if meth is not None:
+        if meth['name'] == 'soft_optimized':
+            fsigma = isampl.find_fsigma(popex=popex, theta=meth['nw_min'], fsigma_max=meth['fsigma_max'], ibnd=ibnd)
+            print(f'Chosen sigma:{fsigma}')
+            meth = {'name':'soft', 'fsigma':fsigma}
 
     # Compute weight array
     w_lik = compute_w_lik(popex=popex, meth=meth)

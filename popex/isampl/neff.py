@@ -202,7 +202,7 @@ def alpha(weights, theta, a_init=1):
     return a_ret
 
 
-def find_fsigma(popex, theta, fsigma_max, l_reg=0):
+def find_fsigma(popex, theta, fsigma_max, ibnd):
     """ `fsigma` computes the best `fsigma` for soft likelihood.
 
 
@@ -224,6 +224,8 @@ def find_fsigma(popex, theta, fsigma_max, l_reg=0):
         A positive value for the effective number of weights
     fsigma_max : float
         Value greater than 1, upper bound for fsigma
+    ibnd : int
+        Include only first ibnd iterations
 
 
     Returns
@@ -237,8 +239,8 @@ def find_fsigma(popex, theta, fsigma_max, l_reg=0):
 
     # Define optimization function
     def opt_fun(fsigma):
-        weights = utils.compute_w_pred(popex=popex, meth={'name':'soft', 'fsigma':fsigma})
-        return (ne(weights) - theta) ** 2 + l_reg*fsigma
+        weights = utils.compute_w_pred(popex=popex, meth={'name':'soft', 'fsigma':fsigma}, ibnd=ibnd)
+        return (ne(weights) - theta) ** 2
 
     # Minimize optimization function
     opt_obj = optimize.minimize_scalar(opt_fun,
