@@ -127,7 +127,7 @@ class TestLearning(unittest.TestCase):
 
             # This method also pickles the model
             popex.add_model(imod, mod, log_p_lik, True,
-                               log_p_pri, log_p_gen, (2, 5, 0))
+                            log_p_pri, log_p_gen, (2, 5, 0))
 
             # In order to use it, we unpickle it again
             with open(Path(popex.path_res, popex.model[imod]), 'rb') as file:

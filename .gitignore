@@ -3,3 +3,5 @@ docs/_templates
 
 .idea
 __pycache__
+
+*.mod

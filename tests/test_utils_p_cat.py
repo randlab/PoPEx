@@ -80,11 +80,12 @@ class TestPCat(unittest.TestCase):
                       path_res=PATH_TEST)
 
         for imod in range(self.nmod_init):
-            mod       = generate_m()
-            p_lik     = compute_log_p_lik(mod)
+            mod = generate_m()
+            p_lik = compute_log_p_lik(mod)
             log_p_pri = compute_log_p_pri(mod)
             log_p_gen = compute_log_p_gen(mod)
-            popex.add_model(0, mod, p_lik, True, log_p_pri, log_p_gen, (2, 5, 0))
+            popex.add_model(0, mod, p_lik, True, log_p_pri,
+                            log_p_gen, (2, 5, 0))
 
         w_pred = utl.compute_w_pred(popex)
         p_cat = utl.compute_cat_prob(popex, w_pred)
@@ -139,7 +140,8 @@ class TestPCat(unittest.TestCase):
             self.assertTrue(isinstance(p_cat_upd[imtype], MType))
             self.assertTrue(isinstance(p_cat_upd[imtype], CatProb))
             self.assertTrue(
-                p_cat_upd[imtype].param_val.shape[0] == p_cat_upd[imtype].nparam)
+                p_cat_upd[imtype].param_val.shape[0] ==
+                p_cat_upd[imtype].nparam)
             self.assertTrue(
                 p_cat_upd[imtype].param_val.shape[1] == p_cat_upd[imtype].ncat)
 
