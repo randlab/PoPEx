@@ -45,6 +45,7 @@ import warnings
 import numpy as np
 import pickle
 from copy import deepcopy
+from pathlib import Path
 
 # Package imports
 import popex.isampl as isampl
@@ -118,7 +119,7 @@ def compute_cat_prob(popex, weights, start=-1, stop=-1):
     # Instantiate p_cat
     mod = deepcopy(popex.model[first])
     if isinstance(mod, str):
-        with open(popex.path_res + mod, 'rb') as mfile:
+        with open(Path(popex.path_res, mod), 'rb') as mfile:
             mod = pickle.load(mfile)
     p_cat = [None for _ in range(nmtype)]
     cat_mtype = [imtype for imtype in range(nmtype)
@@ -133,7 +134,7 @@ def compute_cat_prob(popex, weights, start=-1, stop=-1):
         if imod > first:
             mod = deepcopy(popex.model[imod])
             if isinstance(mod, str):
-                with open(popex.path_res + mod, 'rb') as mfile:
+                with open(Path(popex.path_res, mod), 'rb') as mfile:
                     mod = pickle.load(mfile)
         for imtype in cat_mtype:
             for icat in range(mod[imtype].ncat):
@@ -502,7 +503,7 @@ def generate_hd(popex, meth_w_hd, ncmod, kld, p_cat, q_cat):
             hd_ind = hd_param_ind[imtype][ihd]
 
             # Load pickled model and extract hd value
-            path_mod = popex.path_res + popex.model[imod]
+            path_mod = Path(popex.path_res, popex.model[imod])
             with open(path_mod, 'rb') as mfile:
                 model = pickle.load(mfile)
             hd_param_val[imtype].append(model[imtype].param_val[hd_ind])
@@ -925,7 +926,7 @@ def write_hd_info(popex, imod, hd_param_ind, hd_param_val):
     nmtype = popex.nmtype
 
     # Make hd directory
-    path_hd = path_res + 'hd/'
+    path_hd = Path(path_res, 'hd/')
     try:
         os.mkdir(path_hd)
     except OSError as exc:
@@ -1008,7 +1009,7 @@ def write_run_info(pb, popex, imod, log_p_lik, cmp_log_p_lik,
         write_run_info.__first_call = False
     else:
         mode = 'a'
-    with open('{}/run_info.txt'.format(path_res), mode) as file:
+    with open(Path(path_res,'run_info.txt'), mode) as file:
 
         # Write model details
         file.write('Model {:6d}\n'.format(imod) + '-' * 12 + '\n')

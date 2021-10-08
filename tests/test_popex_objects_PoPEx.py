@@ -19,13 +19,12 @@ structure. The tests are all formulated in terms of the 'assert' method.
 # General imports
 import unittest
 import numpy as np
-import os
+from pathlib import Path
 
 # Package imports
 from popex.popex_objects import PoPEx, CatParam, ContParam
 
-PATH_TEST = os.path.dirname(os.path.dirname(__file__)) + '/'\
-               + 'test/test_dir/'
+PATH_TEST = Path(Path(__file__).parent, 'test_dir/')
 
 
 # Unit test class

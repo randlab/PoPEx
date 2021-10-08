@@ -20,15 +20,14 @@ all formulated in terms of the 'assert' method.
 # General imports
 import unittest
 import numpy as np
-import os
+from pathlib import Path
 
 # # Package imports
 from popex.popex_objects import PoPEx, CatParam, ContParam, CatProb, MType
 import popex.utils as utl
 from popex.cnsts import NP_MIN_TOL
 
-PATH_TEST = os.path.dirname(os.path.dirname(__file__)) + '/'\
-               + 'test/test_dir/'
+PATH_TEST = Path(Path(__file__).parent, 'test_dir/')
 
 
 # Set up toy functions for 'Problem'

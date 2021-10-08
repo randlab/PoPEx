@@ -57,6 +57,7 @@ import multiprocessing
 from copy import deepcopy
 from collections import deque
 import bisect
+from pathlib import Path
 
 # Package imports
 import popex.isampl as isampl
@@ -142,12 +143,7 @@ def run_popex_mp(pb, path_res, path_q_cat,
         print("    restarting from iteration = {:>6d}\n".format(restart_point.nmod))
 
     # Generate 'model' folder
-    try:
-        os.mkdir('{}model/'.format(path_res))
-    except OSError as exc:
-        if exc.errno != errno.EEXIST:
-            raise
-        pass
+    os.makedirs(Path(path_res, 'model', exist_ok=True)
 
     # The map 'q_cat' must be a nmtype-tuple of 'CatProb' or 'None' objects
     print('    > load q_cat...', end='')
@@ -260,7 +256,7 @@ def run_popex_mp(pb, path_res, path_q_cat,
                 if all([si_freq > 0,
                         np.mod(popex.nmod, si_freq) == 0,
                         stop is False]):
-                    with open('{}popex.pop'.format(popex.path_res), 'wb')\
+                    with open(Path(path_res, 'popex.pop'), 'wb')\
                             as file:
                         pickle.dump(popex, file)
 
@@ -271,13 +267,13 @@ def run_popex_mp(pb, path_res, path_q_cat,
 
     # Save final PoPEx result
     print('    > save PoPEx set...', end='')
-    with open('{}popex.pop'.format(popex.path_res), 'wb') as file:
+    with open(Path(popex.path_res, 'popex.pop'), 'wb') as file:
         pickle.dump(popex, file)
     print('done')
 
     # Save Problem
     print('    > save problem...', end='')
-    with open('{}problem.pb'.format(popex.path_res), 'wb') as file:
+    with open(Path(popex.path_res, 'problem.pb'), 'wb') as file:
         pickle.dump(pb, file)
     print('done')
 
@@ -416,7 +412,7 @@ def _read_iteration(restart_point, imod):
 
     p = restart_point
 
-    with open(p.path_res + p.model[imod], 'rb') as file_handle:
+    with open(Path(p.path_res, p.model[imod]), 'rb') as file_handle:
         model = pickle.load(file_handle)
     ncmod = p.nc[imod]
     log_p_lik = p.log_p_lik[imod]
@@ -484,7 +480,7 @@ def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
     h_est, m_est = divmod(m_est, 60)
 
     # Write into a file 'iteration_info.txt'
-    with open('{}/run_progress.txt'.format(path_res), 'w+') as file:
+    with open(Path(path_res, 'run_progress.txt'), 'w+') as file:
         # Start with empty line
         file.write('\n')
 
@@ -560,7 +556,7 @@ def pred_popex_mp(pred, path_res, nmp=1):
     tst_pred = time.time()
 
     # Load PoPEx results
-    with open(path_res + 'popex.pop', 'rb') as file:
+    with open(Path(path_res, 'popex.pop'), 'rb') as file:
         popex = pickle.load(file)  # type: PoPEx
 
     # Compute prediction indices
@@ -612,7 +608,7 @@ def pred_popex_mp(pred, path_res, nmp=1):
 
     # Save Prediction
     print('    > save prediction...', end='')
-    with open('{}pred.pred'.format(popex.path_res), 'wb') as file:
+    with open(Path(popex.path_res, 'pred.pred'), 'wb') as file:
         pickle.dump(pred, file)
     print('done')
 
@@ -685,7 +681,7 @@ def _write_pred_sum(path_res, ipred, ndone, ntot, t_pred):
     h_est, m_est = divmod(m_est, 60)
 
     # Write into a file 'iteration_info.txt'
-    with open('{}pred_progress.txt'.format(path_res), 'w+') as file:
+    with open(Path(path_res, 'pred_progress.txt'), 'w+') as file:
         # Write title
         file.write('PREDICTION PROGRESS SUMMARY\n')
         file.write('---------------------------\n')

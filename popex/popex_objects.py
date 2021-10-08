@@ -44,6 +44,7 @@ import numpy as np
 import reprlib
 from copy import deepcopy
 import pickle
+from pathlib import Path
 
 # Package imports
 import popex.popex_messages as msg
@@ -182,7 +183,7 @@ class PoPEx:
         """
         # Pickle the model to save memory
         path_mod = 'model/mod{:06d}.mod'.format(imod)
-        with open(self.path_res + path_mod, 'wb') as mfile:
+        with open(Path(self.path_res, path_mod), 'wb') as mfile:
             pickle.dump(model, mfile)
 
         # Add model information to self
@@ -228,7 +229,7 @@ class PoPEx:
         """
         # Pickle the model to save memory
         path_mod = 'model/mod{:06d}.mod'.format(imod)
-        with open(self.path_res + path_mod, 'wb') as mfile:
+        with open(Path(path_res, path_mod), 'wb') as mfile:
             pickle.dump(model, mfile)
 
         # Insert the model and the values at 'loc'

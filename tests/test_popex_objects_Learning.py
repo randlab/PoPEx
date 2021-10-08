@@ -22,14 +22,13 @@ is computed.
 import unittest
 import numpy as np
 from sklearn import tree
-import os
+from pathlib import Path
 import pickle
 
 # Package imports
 from popex.popex_objects import PoPEx, Problem, Learning, CatParam, ContParam
 
-PATH_TEST = os.path.dirname(os.path.dirname(__file__)) + '/'\
-               + 'test/test_dir/'
+PATH_TEST = Path(Path(__file__).parent, 'test_dir/')
 
 
 # Define a toy subclass of 'Learning'
@@ -131,7 +130,7 @@ class TestLearning(unittest.TestCase):
                                log_p_pri, log_p_gen, (2, 5, 0))
 
             # In order to use it, we unpickle it again
-            with open(popex.path_res + popex.model[imod], 'rb') as file:
+            with open(Path(popex.path_res, popex.model[imod]), 'rb') as file:
                 popex.model[imod] = pickle.load(file)
 
         self.lrn.train(popex)
