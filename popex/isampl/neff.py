@@ -54,7 +54,14 @@ def ne(weights):
     # Raise numpy over-/underflow errors
     old_settings = np.seterr(over='raise', under='raise')
 
-    result = (np.sum(weights) ** 2) / np.sum(weights**2)
+    w_norm = weights / np.max(weights)
+    try:
+        w_norm_sq = w_norm**2
+    except FloatingPointError:
+        w_norm[w_norm < NP_MIN_TOL] = 0
+        w_norm_sq = w_norm**2
+
+    result = ( (np.sum(weights)/np.max(weights)) ** 2) / np.sum(w_norm_sq)
 
     # Set numpy settings back
     np.seterr(**old_settings)
