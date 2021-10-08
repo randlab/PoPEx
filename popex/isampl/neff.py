@@ -54,7 +54,9 @@ def ne(weights):
     # Raise numpy over-/underflow errors
     old_settings = np.seterr(over='raise', under='raise')
 
-    w_norm = weights / np.max(weights)
+    # The expression: weights/np.max(weights) can result in underflow
+    # first 1/np.max(weights) and then multiply help avoid the error
+    w_norm = weights *  (1/np.max(weights))
     try:
         w_norm_sq = w_norm**2
     except FloatingPointError:
