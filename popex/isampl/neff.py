@@ -37,7 +37,7 @@ def ne(weights):
 
     Kish's effective number of weights is computed as
 
-        `n_e(w_1, ..., w_n) = ( \sum w_i )^2 / ( \sum w_i^2 )`.
+        `n_e(w_1, ..., w_n) = ( \\sum w_i )^2 / ( \\sum w_i^2 )`.
 
 
     Parameters
@@ -56,14 +56,14 @@ def ne(weights):
 
     # The expression: weights/np.max(weights) can result in underflow
     # first 1/np.max(weights) and then multiply help avoid the error
-    w_norm = weights *  (1/np.max(weights))
+    w_norm = weights * (1 / np.max(weights))
     try:
         w_norm_sq = w_norm**2
     except FloatingPointError:
         w_norm[w_norm < NP_MIN_TOL] = 0
         w_norm_sq = w_norm**2
 
-    result = ( (np.sum(weights)/np.max(weights)) ** 2) / np.sum(w_norm_sq)
+    result = ((np.sum(weights) / np.max(weights)) ** 2) / np.sum(w_norm_sq)
 
     # Set numpy settings back
     np.seterr(**old_settings)
@@ -79,7 +79,7 @@ def ne_var(weights):
     The effective number of weights for an empirical estimation of the variance
     is computed as:
 
-        `n_e(w_1, ..., w_n) = ( \sum w_i^2 )^2 / ( \sum w_i^4 )`.
+        `n_e(w_1, ..., w_n) = ( \\sum w_i^2 )^2 / ( \\sum w_i^4 )`.
 
 
     Parameters
@@ -113,7 +113,7 @@ def ne_gamma(weights):
 
     The effective number of weights for estimating the skewness is computed as:
 
-        `n_e(w_1, ..., w_n) = ( \sum w_i^2 )^3 / ( ( \sum w_i^3 )^2 )`.
+        `n_e(w_1, ..., w_n) = ( \\sum w_i^2 )^3 / ( ( \\sum w_i^3 )^2 )`.
 
 
     Parameters
@@ -248,13 +248,14 @@ def find_fsigma(popex, theta, fsigma_max, ibnd):
 
     # Define optimization function
     def opt_fun(fsigma):
-        weights = utils.compute_w_pred(popex=popex, meth={'name':'soft', 'fsigma':fsigma}, ibnd=ibnd)
+        weights = utils.compute_w_pred(
+            popex=popex, meth={'name': 'soft', 'fsigma': fsigma}, ibnd=ibnd)
         return (ne(weights) - theta) ** 2
 
     # Minimize optimization function
     opt_obj = optimize.minimize_scalar(opt_fun,
-                                method='Bounded',
-                                bounds=[FSIGMA_MIN, fsigma_max],)
+                                       method='Bounded',
+                                       bounds=[FSIGMA_MIN, fsigma_max],)
 
     np.seterr(**old_settings)
     return opt_obj['x']

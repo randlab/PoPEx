@@ -13,8 +13,8 @@ Category probabilities and kld maps
 Hard conditioning data
     - :meth:`generate_hd`:        Computes the new hard conditioning data
     - :meth:`merge_hd`:           Merges prior and new hard conditioning data
-    - :meth:`compute_ncmod`:      Computes the number of conditioning points per
-      model type
+    - :meth:`compute_ncmod`:      Computes the number of conditioning points
+      per model type
     - :meth:`compute_w_lik`:      Computes the likelihood weights (used for the
       hard conditioning maps)
 
@@ -148,7 +148,7 @@ def update_cat_prob(p_cat, m_new, w_new, sum_w_old):
 
     If `p_cat_old` represents the old category probability maps, then we have
 
-        `p_cat_new = [sum_w_old*p_cat_old + \sum_i w_new_i*1(m_new_i)]
+        `p_cat_new = [sum_w_old*p_cat_old + \\sum_i w_new_i*1(m_new_i)]
         / [sum_w_old + sum(w_new)]`
 
     where `1(m_new_i)` is the categorical indicator of the model `i`.
@@ -203,7 +203,7 @@ def update_cat_prob(p_cat, m_new, w_new, sum_w_old):
         # Update p_cat
         for imtype in cat_mtype:
             p_cat[imtype].param_val = p_cat[imtype].param_val*w_p_cat \
-                                      + p_cat_new[imtype].param_val*w_p_cat_new
+                + p_cat_new[imtype].param_val*w_p_cat_new
     return None
 
 
@@ -212,7 +212,7 @@ def compute_entropy(p_cat):
 
     The entropy of a discrete probability distributions `p = (p_1, ...,p_s)` is
 
-        `H(p) = -\sum_{i=1}^s p_i log( p_i )`.
+        `H(p) = -\\sum_{i=1}^s p_i log( p_i )`.
 
     Therefore, if the probability map `p_cat` is a ``m-tuple`` such that
     `p_cat[i].param_val` is an ``ndarray`` of `shape=(nparam_i, nfac_i)`, the
@@ -272,20 +272,21 @@ def compute_kld(p_cat, q_cat):
     The KLD between two discrete probability distributions `p = (p_1, ...,p_s)`
     and `q = (q_1, ...,q_s)` is
 
-        `KLD(p||q) = \sum_{i=1}^s p_i log( p_i / q_i)`.
+        `KLD(p||q) = \\sum_{i=1}^s p_i log( p_i / q_i)`.
 
-    Therefore, if the probability maps `p_cat` and `q_cat` are ``m-tuples`` such
-    that `p_cat[i].param_val` and `q_cat[i].param_val` are ``ndarrays`` of
-    `shape=(nparam_i, nfac_i)`, the Kullback-Leibler divergence is also an
-    ``m-tuple`` where `kld[i].param_val` is an ``ndarray`` of `shape=(nparam,)`.
+    Therefore, if the probability maps `p_cat` and `q_cat` are ``m-tuples``
+    such that `p_cat[i].param_val` and `q_cat[i].param_val` are ``ndarrays`` of
+    `shape=(nparam_i, nfac_i)`, the Kullback-Leibler divergence is also
+    an ``m-tuple`` where `kld[i].param_val`
+    is an ``ndarray`` of `shape=(nparam,)`.
 
 
     Notes
     -----
     Note that `t*log(t/a) -> 0` as `t -> 0`. Therefore, we require that `q_i(x)
     = 0` implies `p_i(x) = 0` in which case we can put `kld(x) = 0`. However,
-    due to the (inaccurate) numerical representation of the probability maps, it
-    is possible that `q_i(x) = 0` and `p_i(x) > 0` (f.e. when `q` has been
+    due to the (inaccurate) numerical representation of the probability maps,
+    it is possible that `q_i(x) = 0` and `p_i(x) > 0` (f.e. when `q` has been
     approximated from a relative small set of models). In this case we enforce
     `q_i(x) = p_i(x)` what leads to `kld(x) = 0`.
 
@@ -335,7 +336,7 @@ def compute_kld(p_cat, q_cat):
             nnz_ind = p_i[:, icat] > NP_MIN_TOL
             kld[imtype].param_val[nnz_ind]\
                 += p_i[nnz_ind, icat] *\
-                   np.log(p_i[nnz_ind, icat] / q_i[nnz_ind, icat])
+                np.log(p_i[nnz_ind, icat] / q_i[nnz_ind, icat])
 
         # Correct (theoretically impossible) negative kld values
         kld[imtype].param_val[np.abs(kld[imtype].param_val) < NP_MIN_TOL] = 0
@@ -350,9 +351,9 @@ def generate_hd(popex, meth_w_hd, ncmod, kld, p_cat, q_cat):
     """ `generate_hd` generates the hard conditioning data set that is used
     to sample a new model.
 
-    This set of hard conditioning data does NOT include prior hard conditioning.
-    For each model type `(imtype)`, every hard conditioning is obtained by the
-    following 2-steps:
+    This set of hard conditioning data does NOT include
+    prior hard conditioning. For each model type `(imtype)`,
+    every hard conditioning is obtained by the following 2-steps:
 
         (a) Sample a location `[j]` according to the values in the Kullback-
             Leibler divergence map (i.e. the values in `kld[imtype].param_val`)
@@ -370,9 +371,10 @@ def generate_hd(popex, meth_w_hd, ncmod, kld, p_cat, q_cat):
     -----
     There are two important things to note:
 
-        (1) The two objects `hd_prior` and `hd_generation` are the corresponding
-            prior and weighted probability values of the hard conditioning
-            CATEGORY that corresponds to the values in `hd_param_val`.
+        (1) The two objects `hd_prior` and `hd_generation` are
+            the corresponding prior and weighted probability values
+            of the hard conditioning CATEGORY that corresponds
+            to the values in `hd_param_val`.
             Therefore, if they are used in the computation of the sampling
             weight ratio, one uses CATEGORY probabilities and NOT value
             probabilities.
@@ -420,9 +422,10 @@ def generate_hd(popex, meth_w_hd, ncmod, kld, p_cat, q_cat):
         `shape=(ncmod[i], ndarray)`.
     hd_prior :  m-tuple
         Tuple of probability values according to the prior probability maps in
-        `q_cat`. Each value corresponds to the prior probability of the category
-        that contains the extracted hard conditioning value.  If there is no
-        hard conditioning for a model type `i`, then `hd_val[i]` is ``None``
+        `q_cat`. Each value corresponds to the prior probability
+        of the category that contains the extracted hard conditioning value.
+        If there is no hard conditioning for a model type `i`,
+        then `hd_val[i]` is ``None``,
         otherwise it is an ``ndarray`` of `shape=(ncmod[i], ndarray)`.
     hd_generation : m-tuple
         Tuple of probability values according to the sampling probability maps
@@ -463,7 +466,7 @@ def generate_hd(popex, meth_w_hd, ncmod, kld, p_cat, q_cat):
         except (ZeroDivisionError, FloatingPointError,
                 RuntimeWarning, RuntimeError):
             kld_nrm = np.ones_like(kld[imtype].param_val)\
-                       / kld[imtype].nparam
+                / kld[imtype].nparam
             warnings.warn(msg.warn1001)
 
         # Compute conditioning location indices
@@ -762,7 +765,7 @@ def compute_w_lik(popex, meth=None):
     elif name == 'soft':
         log_soft_lik = log_w_lik/(meth['fsigma']**2)
         log_soft_lik -= np.max(log_soft_lik)
-        
+
         w_lik = np.zeros_like(log_soft_lik)
         nnz_ind = log_soft_lik >= np.log(NP_MIN_TOL)
         w_lik[nnz_ind] = np.exp(log_soft_lik[nnz_ind])
@@ -805,8 +808,8 @@ def compute_w_pred(popex, nw_min=0, ibnd=-1, meth=None):
 
     where `w` contains the weights associated to the models and `ne(w)` denotes
     the number of effective weights. This quantity can be modified by replacing
-    `w` with `w^\alpha`, where `alpha > 0`. A `1-d` optimisation problem is used
-    to compute the optimal `\alpha` value.
+    `w` with `w^\\alpha`, where `alpha > 0`. A `1-d` optimisation problem
+    is used to compute the optimal `\\alpha` value.
 
 
     Parameters
@@ -818,7 +821,7 @@ def compute_w_pred(popex, nw_min=0, ibnd=-1, meth=None):
     ibnd : int
         Length of the weight array
     meth : dict
-        Defines the approximation method to be used (cf. :meth:`compute_w_lik`).
+        Defines the approximation method to be used (cf. :meth:`compute_w_lik`)
         Fields are
 
             - ``'name'`` : Name of the method (`str`)
@@ -834,9 +837,12 @@ def compute_w_pred(popex, nw_min=0, ibnd=-1, meth=None):
     """
     if meth is not None:
         if meth['name'] == 'soft_optimized':
-            fsigma = isampl.find_fsigma(popex=popex, theta=meth['nw_min'], fsigma_max=meth['fsigma_max'], ibnd=ibnd)
+            fsigma = isampl.find_fsigma(
+                popex=popex, theta=meth['nw_min'],
+                fsigma_max=meth['fsigma_max'],
+                ibnd=ibnd)
             print(f'Chosen sigma:{fsigma}')
-            meth = {'name':'soft', 'fsigma':fsigma}
+            meth = {'name': 'soft', 'fsigma': fsigma}
 
     # Compute weight array
     w_lik = compute_w_lik(popex=popex, meth=meth)
@@ -995,13 +1001,13 @@ def write_run_info(pb, popex, imod, log_p_lik, cmp_log_p_lik,
 
     # Compute n_e diagnostics
     with warnings.catch_warnings(record=True) as _:
-        ne_l    = isampl.ne(compute_w_lik(popex=popex,
-                                          meth={'name': 'exact'}))
+        ne_l = isampl.ne(compute_w_lik(popex=popex,
+                                       meth={'name': 'exact'}))
         ne_w_hd = isampl.ne(compute_w_lik(popex=popex,
                                           meth=pb.meth_w_hd))
-        ne_w_l  = isampl.ne(compute_w_pred(popex=popex,
-                                           nw_min=0,
-                                           meth={'name': 'exact'}))
+        ne_w_l = isampl.ne(compute_w_pred(popex=popex,
+                                          nw_min=0,
+                                          meth={'name': 'exact'}))
 
     # Write into a file 'iteration_info.txt'
     if write_run_info.__first_call:
@@ -1009,7 +1015,7 @@ def write_run_info(pb, popex, imod, log_p_lik, cmp_log_p_lik,
         write_run_info.__first_call = False
     else:
         mode = 'a'
-    with open(Path(path_res,'run_info.txt'), mode) as file:
+    with open(Path(path_res, 'run_info.txt'), mode) as file:
 
         # Write model details
         file.write('Model {:6d}\n'.format(imod) + '-' * 12 + '\n')
@@ -1034,4 +1040,6 @@ def write_run_info(pb, popex, imod, log_p_lik, cmp_log_p_lik,
         file.write('    ne(w_hd)    = {:11.1f}\n'.format(ne_w_hd))
         file.write('    ne(w_pred)  = {:11.1f}\n'.format(ne_w_l))
         file.write('\n\n')
+
+
 write_run_info.__first_call = True

@@ -13,13 +13,13 @@ Sampling definitions
 Classes associated to a model type
     - :class:`MType`: (`abstract`) Parent class for each map associated to a
       model type
-    - :class:`ContParam`: (inherits from :class:`MType`) Class for each map that
-      is associated to the model types but not to categories (e.g.
+    - :class:`ContParam`: (inherits from :class:`MType`) Class for each map
+      that is associated to the model types but not to categories (e.g.
       `kld[imtype]`, `entropy[imtype]`)
-    - :class:`CatMType`: (`abstract`, inherits from :class:`MType`) Parent class
-      for each map that is associated to categories
-    - :class:`CatProb`: (inherits from :class:`CatMType`) This class is used for
-      the representation of probability distributions over categories
+    - :class:`CatMType`: (`abstract`, inherits from :class:`MType`)
+      Parent class for each map that is associated to categories
+    - :class:`CatProb`: (inherits from :class:`CatMType`) This class is used
+      for the representation of probability distributions over categories
       (e.g. `p_cat[imtype]`, `q_cat[imtype]`)
     - :class:`CatParam`: (inherits from :class:`CatMType`) This class is used
       for the representation of categorized parameter values (e.g.
@@ -172,8 +172,8 @@ class PoPEx:
         log_p_gen : float
             Log-generation value of model
         ncmod : m-tuple
-            Defines the number of conditioning points that have been used in the
-            generation of the model
+            Defines the number of conditioning points
+            that have been used in the generation of the model
 
 
         Returns
@@ -188,10 +188,10 @@ class PoPEx:
 
         # Add model information to self
         self.model.append(path_mod)
-        self.log_p_lik     = np.append(self.log_p_lik, log_p_lik)
+        self.log_p_lik = np.append(self.log_p_lik, log_p_lik)
         self.cmp_log_p_lik = np.append(self.cmp_log_p_lik, cmp_log_p_lik)
-        self.log_p_pri     = np.append(self.log_p_pri, log_p_pri)
-        self.log_p_gen     = np.append(self.log_p_gen, log_p_gen)
+        self.log_p_pri = np.append(self.log_p_pri, log_p_pri)
+        self.log_p_gen = np.append(self.log_p_gen, log_p_gen)
         self.nc.append(ncmod)
 
     def insert_model(self, loc, imod, model, log_p_lik, cmp_log_p_lik,
@@ -218,8 +218,8 @@ class PoPEx:
         log_p_gen : float
             Log-generation value of model
         ncmod : m-tuple)
-            Defines the number of conditioning points that have been used in the
-            generation of the model
+            Defines the number of conditioning points
+            that have been used in the generation of the model
 
 
         Returns
@@ -229,15 +229,15 @@ class PoPEx:
         """
         # Pickle the model to save memory
         path_mod = 'model/mod{:06d}.mod'.format(imod)
-        with open(Path(path_res, path_mod), 'wb') as mfile:
+        with open(Path(self.path_res, path_mod), 'wb') as mfile:
             pickle.dump(model, mfile)
 
         # Insert the model and the values at 'loc'
         self.model.insert(loc, path_mod)
-        self.log_p_lik     = np.insert(self.log_p_lik,     loc, log_p_lik)
+        self.log_p_lik = np.insert(self.log_p_lik,     loc, log_p_lik)
         self.cmp_log_p_lik = np.insert(self.cmp_log_p_lik, loc, cmp_log_p_lik)
-        self.log_p_pri     = np.insert(self.log_p_pri, loc, log_p_pri)
-        self.log_p_gen     = np.insert(self.log_p_gen, loc, log_p_gen)
+        self.log_p_pri = np.insert(self.log_p_pri, loc, log_p_pri)
+        self.log_p_gen = np.insert(self.log_p_gen, loc, log_p_gen)
         self.nc.insert(loc, ncmod)
 
     @property
@@ -264,8 +264,8 @@ class Problem:
     Optionally, a likelihood learning scheme can be defined in
     `learning_scheme`. Furthermore, one also must define how to compute the
     ratio in the importance sampling weights. For this, the functions
-    `compute_log_p_pri` and `compute_log_p_gen` can also be defined manually. If
-    they are left empty, the default version that only considers the hard
+    `compute_log_p_pri` and `compute_log_p_gen` can also be defined manually.
+    If they are left empty, the default version that only considers the hard
     conditioning data points is used.
 
 
@@ -279,12 +279,12 @@ class Problem:
         Parameters:
             - hd_param_ind : m-tuple
                 For each instance in the model tuple, this variable defines the
-                hard conditioning INDICES (where to apply HD). `hd_param_ind[i]`
-                is an ``ndarray`` of `shape=(nhd_i,)`
+                hard conditioning INDICES (where to apply HD).
+                `hd_param_ind[i]` is an ``ndarray`` of `shape=(nhd_i,)`
             - hd_param_val : m-tuple
                 For each instance in the model tuple, this variable defines the
-                hard conditioning VALUES (what to imposed). `hd_param_val[i]` is
-                an ``ndarray`` of `shape=(nhd_i,)`
+                hard conditioning VALUES (what to imposed).
+                `hd_param_val[i]` is an ``ndarray`` of `shape=(nhd_i,)`
             - imod : int
                 Model index
 
@@ -293,8 +293,8 @@ class Problem:
                 New model such as `(CatParam_1, ..., CatParam_m)`
     compute_log_p_lik : function
         Computes the natural logarithm of the likelihood of a model. It usually
-        runs an expensive forward operation and compares the response to a given
-        set of observations.
+        runs an expensive forward operation
+        and compares the response to a given set of observations.
 
         `compute_log_p_lik(model, imod)`
 
@@ -309,9 +309,9 @@ class Problem:
             float
                 Log-likelihood value of the model
     get_hd_pri : function
-        Provides the 'prior hard conditioning' that is used in the definition of
-        the model space (i.e. parameter values that are known without
-        uncertainty).
+        Provides the 'prior hard conditioning' that is used
+        in the definition of the model space
+        (i.e. parameter values that are known without uncertainty).
 
         `get_hd_pri()`
 
@@ -336,9 +336,9 @@ class Problem:
                 `generate_m()`)
             - hd_p_pri : m-tuple
                 Tuple of the hard conditioning probability values for a given
-                model. Each probability value describes the prior probability of
-                observing the category of the model value at the corresponding
-                conditioning location.
+                model. Each probability value describes the prior probability
+                of observing the category of the model value
+                at the corresponding conditioning location.
                 hd_p_pri[i] is an ``ndarray`` of `shape=(nhd_i,)`
             - hd_param_ind : m-tuple
                 Hard conditioning indices
@@ -360,10 +360,10 @@ class Problem:
                 `generate_m()`)
             - hd_p_gen : m-tuple
                 Tuple of the hard conditioning probability values for a given
-                model. Each probability value describes the prior probability of
-                observing the category of the model value at the corresponding
-                conditioning location. `hd_p_gen[i]` is an ``ndarray`` of
-                `shape=(nhd_i,)`
+                model. Each probability value describes the prior probability
+                of observing the category of the model value
+                at the corresponding conditioning location.
+                `hd_p_gen[i]` is an ``ndarray`` of `shape=(nhd_i,)`
             - hd_param_ind : m-tuple
                 Hard conditioning indices
         Returns:
@@ -425,8 +425,8 @@ class Problem:
 
             `ratio(m) = rho(m) / phi(m)`.
 
-        In other words, the default functions assume that we are only interested
-        in the DIFFERENCE of the log values, i.e.
+        In other words, the default functions assume that
+        we are only interested in the DIFFERENCE of the log values, i.e.
 
             `log_p_pri - log_p_gen`,
 
@@ -473,8 +473,8 @@ class Problem:
             self.meth_w_hd = dict(meth_w_hd)
 
         # Constants
-        self.nmtype    = int(nmtype)
-        self.seed      = int(seed)
+        self.nmtype = int(nmtype)
+        self.seed = int(seed)
 
     def __repr__(self):
         class_name = type(self).__name__
@@ -506,9 +506,9 @@ def _default_log_p(model, hd_prob, hd_ind):
     """ `_default_log_p` is a default definition of the function that computes
     the log-probability of sampling a model from a given set of hard
     conditioning data. In this definition, it is assumed that the hard
-    conditioning locations and all the model types are INDEPENDENT. From these
-    assumptions, it follows that the probability of sampling a model is obtained
-    by
+    conditioning locations and all the model types are INDEPENDENT.
+    From these assumptions, it follows that the probability
+    of sampling a model is obtained by
 
         `p = p_1 * ... * p_nmtype`
 
@@ -586,15 +586,15 @@ class Learning(abc.ABC):
           effectively been computed (cf. `PoPEx.cmp_log_p_lik`).
         - For a given instance compute a probability `p in [0,1]` with which
           the log-likelihood is predicted or evaluated (cf.
-          :meth:`compute_p_eval_for`) and then the value eventually is predicted
+          :meth:`compute_p_eval_for`) and then the value is predicted
           (cf. :meth:`learn_value_of`).
 
     Notes
     -----
         In the PoPEx framework this can be used to learn the log-likelihood
-        values for each model (=value of interest). In this regard, predicting a
-        value rather than computing it can considerably improve the overall
-        computational time.
+        values for each model (=value of interest). In this regard,
+        predicting a value rather than computing it
+        can considerably improve the overall computational time.
     """
 
     @abc.abstractmethod
@@ -700,10 +700,11 @@ class Prediction:
     nw_min : float
         Minimum number of effective weights (= l_0)
     wfrac_pred : float
-        Number in (0,1] defining the fraction of the total weight to be used for
-        the prediction. If `p=1`, all predictions for any model that has
-        non-zero weight is computed. If `p<1` we take the minimum number of
-        weight to cover a ratio of `p` of the total sum of weights.
+        Number in (0,1] defining the fraction of the total weight
+        to be used for the prediction. If `p=1`, all predictions
+        for any model with non-zero weight are computed. If `p<1`,
+        we take the minimum number of weights
+        to cover a ratio of `p` of the total sum of weights.
     """
 
     def __init__(self,
@@ -716,8 +717,8 @@ class Prediction:
         if meth_w_pred is None:
             self.meth_w_pred = {'name': 'exact'}
         else:
-            self.meth_w_pred  = dict(meth_w_pred)
-        self.nw_min     = float(nw_min)
+            self.meth_w_pred = dict(meth_w_pred)
+        self.nw_min = float(nw_min)
         self.wfrac_pred = float(wfrac_pred)
 
     def __repr__(self):
@@ -891,8 +892,8 @@ class ContParam(MType):
 
 class CatProb(CatMType):
     """ This class is used to define a map of continuous values for each
-    category, where each value is associated to a model parameter (e.g. `p_cat`,
-    `q_cat`, etc.).
+    category, where each value is associated to a model parameter
+    (e.g. `p_cat`, `q_cat`, etc.).
 
 
     Notes

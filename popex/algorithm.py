@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-""" `algorithm.py` contains the main implementation of the parallel (multiple-
-chain) PoPEx algorithm. Mainly this concerns the two functions
+""" `algorithm.py` contains the main implementation of the parallel
+(multiple- chain) PoPEx algorithm. Mainly this concerns the two functions
 
     - :meth:`run_popex_mp`: Main implementation for PoPEx runs
     - :meth:`pred_popex_mp`: Main implementation for PoPEx predictions
@@ -50,7 +50,6 @@ The content of the different files is:
 import warnings
 import pickle
 import time
-import errno
 import os
 import numpy as np
 import multiprocessing
@@ -67,9 +66,17 @@ from popex.popex_objects import PoPEx, CatProb
 from popex.cnsts import NP_MIN_TOL, RECMP_P_CAT_FREQ
 
 
-def run_popex_mp(pb, path_res, path_q_cat,
-                 ncmax=(20,), nmp=1, nmax=1000,
-                 upd_hdmap_freq=1, upd_ls_freq=-1, si_freq=-1, restart_point=None):
+def run_popex_mp(pb,
+                 path_res,
+                 path_q_cat,
+                 ncmax=(20,),
+                 nmp=1,
+                 nmax=1000,
+                 upd_hdmap_freq=1,
+                 upd_ls_freq=-1,
+                 si_freq=-1,
+                 restart_point=None,
+                 ):
     """ `run_popex_mp` is the main implementation of the PoPEx algorithm.
 
     The algorithm expands a set of models until the defined stopping condition
@@ -140,14 +147,15 @@ def run_popex_mp(pb, path_res, path_q_cat,
     print('    nmp     = {:>6d}'.format(nmp))
     print("    hd_meth = '{}'".format(pb.meth_w_hd['name']))
     if restart_point is not None:
-        print("    restarting from iteration = {:>6d}\n".format(restart_point.nmod))
+        print("    restarting from iteration = {:>6d}\n".format(
+            restart_point.nmod))
 
     # Generate 'model' folder
-    os.makedirs(Path(path_res, 'model', exist_ok=True)
+    os.makedirs(Path(path_res, 'model', exist_ok=True))
 
     # The map 'q_cat' must be a nmtype-tuple of 'CatProb' or 'None' objects
     print('    > load q_cat...', end='')
-    with open('{}q_cat.prob'.format(path_q_cat), 'rb') as file:
+    with open(Path(path_q_cat, 'q_cat.prob'), 'rb') as file:
         q_cat = pickle.load(file)
     for imtype in cond_mtype:
         if not isinstance(q_cat[imtype], CatProb):
@@ -157,9 +165,6 @@ def run_popex_mp(pb, path_res, path_q_cat,
     # The kld map is zero initially (no conditioning data is selected)
     p_cat = deepcopy(q_cat)
     kld = utl.compute_kld(p_cat, q_cat)
-
-
-
 
     # Main PoPEx initialisations
     stop = False
@@ -227,9 +232,8 @@ def run_popex_mp(pb, path_res, path_q_cat,
                         # Update 'p_cat' (which is much faster)
                         w_hd = utl.compute_w_lik(popex=popex,
                                                  meth=pb.meth_w_hd)
-                        ind_not_upd = \
-                            [i for i, id in enumerate(sim_id_mngr)
-                             if id in sim_id_not_upd]
+                        ind_not_upd = [i for i, id in enumerate(sim_id_mngr)
+                                       if id in sim_id_not_upd]
                         w_not_upd = w_hd[ind_not_upd]
                         sum_w_old = np.sum(w_hd) - np.sum(w_not_upd)
                         utl.update_cat_prob(p_cat, m_not_upd,
@@ -245,7 +249,7 @@ def run_popex_mp(pb, path_res, path_q_cat,
                 # Update 'learning_scheme' (if required)
                 if pb.learning_scheme and cmp_log_p_lik:
                     n_cmp = np.sum(popex.cmp_log_p_lik)
-                    if all((upd_ls_freq > 0, np.mod(n_cmp, upd_ls_freq)==0)):
+                    if all((upd_ls_freq > 0, np.mod(n_cmp, upd_ls_freq) == 0)):
                         pb.learning_scheme.train(popex)
 
                 # Update stopping condition
@@ -340,11 +344,12 @@ def _run_process(pb, popex, imod,
     ncmod_tmp = utl.compute_ncmod(popex, meth_w_hd)
 
     # Hard conditioning
-    hd_i_param_ind, hd_i_param_val, hd_prior, hd_generation = \
-        utl.generate_hd(popex, meth_w_hd, ncmod_tmp, kld, p_cat, q_cat)
-    hd_param_ind, hd_param_val = \
-        utl.merge_hd(hd_prior_param_ind, hd_i_param_ind,
-                     hd_prior_param_val, hd_i_param_val)
+    hd_i_param_ind, hd_i_param_val, hd_prior, hd_generation = utl.generate_hd(
+        popex, meth_w_hd, ncmod_tmp, kld, p_cat, q_cat)
+    hd_param_ind, hd_param_val = utl.merge_hd(hd_prior_param_ind,
+                                              hd_i_param_ind,
+                                              hd_prior_param_val,
+                                              hd_i_param_val)
 
     # The number of hard conditioning data may has changed (duplicated loc.)
     ncmod = tuple([len(hd_ind) if hd_ind is not None else 0
@@ -375,6 +380,7 @@ def _run_process(pb, popex, imod,
     log_p_gen = pb.compute_log_p_gen(model, hd_generation, hd_param_ind)
 
     return imod, model, ncmod, log_p_lik, cmp_log_p_lik, log_p_pri, log_p_gen
+
 
 def _read_iteration(restart_point, imod):
     """ `_read_iteration` reads a model and its properties
@@ -461,13 +467,13 @@ def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
 
     # Compute n_e diagnostics
     with warnings.catch_warnings(record=True) as _:
-        ne_l    = isampl.ne(utl.compute_w_lik(popex=popex,
-                                              meth={'name': 'exact'}))
+        ne_l = isampl.ne(utl.compute_w_lik(popex=popex,
+                                           meth={'name': 'exact'}))
         ne_w_hd = isampl.ne(utl.compute_w_lik(popex=popex,
                                               meth=pb.meth_w_hd))
-        ne_w_l  = isampl.ne(utl.compute_w_pred(popex=popex,
-                                               nw_min=0,
-                                               meth={'name': 'exact'}))
+        ne_w_l = isampl.ne(utl.compute_w_pred(popex=popex,
+                                              nw_min=0,
+                                              meth={'name': 'exact'}))
 
     # Compute time information (t_popex, t_mod, t_est)
     progress = popex.nmod / nmax
@@ -493,7 +499,8 @@ def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
         nfull = int(bar_width * progress)
         nempty = bar_width - nfull
         file.write('  Status\n')
-        file.write('    n_mod       = {:7d} / {:7d}\n'.format(popex.nmod, nmax))
+        file.write(
+            '    n_mod       = {:7d} / {:7d}\n'.format(popex.nmod, nmax))
         file.write('    [{:s}{:s}]'.format('-' * nfull, ' ' * nempty))
         file.write(' {:3.0f}%\n'.format(progress * 100))
         file.write('\n')
