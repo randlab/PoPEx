@@ -1,3 +1,6 @@
+[![Documentation Status](https://readthedocs.org/projects/popex/badge/?version=latest)](https://popex.readthedocs.io/en/latest/?badge=latest)
+[![CircleCI](https://circleci.com/gh/randlab/PoPEx/tree/master.svg?style=shield)](https://circleci.com/gh/randlab/PoPEx/tree/master)
+
 # PoPEx Python3 Package
 
 This python3 package is an implementation of the parallelized adaptive importance sampler. PoPEx is a robust method to solve the inverse problem when the parameters are categorical (such as rock types) and when a prior geostatistical model is defined.
@@ -9,6 +12,6 @@ The method is described in detail in the following references:
 
 ## Documentation
 
-Find the documentation of the package under
+Find the documentation of the package under https://popex.readthedocs.io
 
-[![Documentation Status](https://readthedocs.org/projects/popex/badge/?version=latest)](https://popex.readthedocs.io/en/latest/?badge=latest)
+
