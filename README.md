@@ -1,5 +1,8 @@
 [![Documentation Status](https://readthedocs.org/projects/popex/badge/?version=latest)](https://popex.readthedocs.io/en/latest/?badge=latest)
 [![CircleCI](https://circleci.com/gh/randlab/PoPEx/tree/master.svg?style=shield)](https://circleci.com/gh/randlab/PoPEx/tree/master)
+[![Workflow for Codecov](https://github.com/randlab/PoPEx/actions/workflows/ci.yml/badge.svg)](https://github.com/randlab/PoPEx/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/randlab/PoPEx/branch/master/graph/badge.svg?token=XK3RU1M62J)](https://codecov.io/gh/randlab/PoPEx)
+[![PyPI version](https://badge.fury.io/py/popex.svg)](https://badge.fury.io/py/popex)
 
 # PoPEx Python3 Package
 
