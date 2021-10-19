@@ -130,7 +130,6 @@ def list_mCatParam_to_mCatProb(list_mCatParam):
     # we appended CatProbs to a list, but we need to return a tuple
     return tuple(catProb_list)
 
-
 # Category probabilities and kld maps
 def compute_cat_prob(popex, weights, start=-1, stop=-1):
     """ `compute_cat_prob` computes the weighted category probabilities.

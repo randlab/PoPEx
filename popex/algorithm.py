@@ -284,6 +284,45 @@ def run_popex_mp(pb,
     print("\n  END 'RUN_POPEX_MP'\n")
 
 
+    
+def get_q_cat(generate_m, get_hd_pri, n_prior, nmp=1):
+    """ `get_q_cat` samples from prior using functions
+    specified in Problem and returns a CatProb object
+    required in PoPEx procedure
+
+    Parameters
+    ----------
+    generate_m : function
+        as specified in Problem
+    get_hd_pri : function
+        as specified in Problem
+    n_prior : int
+        number of prior realizations to form the q_cat map
+    nmp : int
+        number of parallel processes
+
+
+    Returns
+    -------
+    mCatProb : m-tuple of CatProb objects
+    """
+    # core popex does not depend on joblib
+    # we release it as a minor revision, so we import here
+    # for major revision joblib to setup.py and import in the header
+    from joblib import Parallel, delayed
+    
+    # prepare the stage, wrapper for parallel execution
+    hd_param_ind, hd_param_val = get_hd_pri()
+    def wrap_generate_m(imod):
+        return generate_m(hd_param_ind, hd_param_val, imod)
+    
+    # computation of prior models in parallel
+    list_mCatParam = Parallel(n_jobs=nmp)(delayed(wrap_generate_m)(imod) for imod in range(n_prior))
+                                                       
+    #convert to CatProb and return m-tuple
+    mCatProb = utl.list_mCatParam_to_mCatProb(list_mCatParam)
+    return mCatProb
+
 def _run_process(pb, popex, imod,
                  hd_prior_param_ind, hd_prior_param_val,
                  kld, p_cat, q_cat, restart_point):

@@ -1,5 +1,6 @@
 import numpy as np
 import popex.utils as utils
+import popex.algorithm as algorithm
 from popex.popex_objects import CatParam, CatProb
 
 def test_check_interval():
@@ -34,3 +35,14 @@ def test_list_mCatParam_to_mCatProb():
     print(res_mCatProb[0], res_mCatProb[1])
 
     assert mCatProb == res_mCatProb
+
+def get_hd_pri():
+    return ([],), ([],)
+
+def generate_m(hd_param_ind, hd_param_val, imod):
+    return (CatParam(param_val=[1, 2, 2], categories=[[(0.5, 1.5)], [(1.5, 2.5)]]), )
+
+def test_get_q_cat():
+    mCatProb = algorithm.get_q_cat(generate_m, get_hd_pri, 2)
+    assert mCatProb == (CatProb(param_val=np.array([[1,0], [0,1], [0,1]]),
+            categories=[[(0.5, 1.5)], [(1.5, 2.5)]]), )
