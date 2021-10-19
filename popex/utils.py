@@ -53,6 +53,48 @@ import popex.popex_messages as msg
 from popex.popex_objects import PoPEx, CatMType, ContParam, CatProb
 from popex.cnsts import NP_MIN_TOL
 
+def check_category(list_values, category):
+    """ `check category` verifies for each value if it falls in category
+    
+    Parameters
+    ----------
+    list_values : ndarray
+        list of scalars
+    category: list
+        list of 2-tuples
+        
+    Returns
+    -------
+    ndarray, shape = np.shape(list_values)
+        i-th elements is True if list_values[i] belongs to the category
+        and False otherwise. category is defined as union of all intervals
+        defined by the 2-tuples (cf. `popex_objects.CatMType`)
+    
+    """
+    belong_to_internal_list = [check_interval(list_values, c)
+                               for c in category]
+    return np.sum(belong_to_internal_list, axis=0) > 0
+
+    
+def check_interval(list_values, interval):
+    """ `check category` verifies for each value if it falls in interval
+    
+    Parameters
+    ----------
+    list_values : ndarray
+        list of scalars
+    category: 2-tuple
+        interval, first value is the lower end, second is the high end
+        
+    Returns
+    -------
+    ndarray, shape = np.shape(list_values)
+        i-th elements is True if list_values[i] falls in the interval
+        
+    """
+    # a better error handling would be desirable
+    assert interval[0] < interval[1]
+    return (list_values < interval[1]) * (list_values > interval[0])
 
 # Category probabilities and kld maps
 def compute_cat_prob(popex, weights, start=-1, stop=-1):
