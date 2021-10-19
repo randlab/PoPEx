@@ -2,4 +2,4 @@
 For each new problem, the user has to create
 a fully defined instance of the Problem() class.
 """
-__version__ = '1.3.1'
+__version__ = '1.4.0'
