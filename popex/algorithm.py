@@ -156,7 +156,7 @@ def run_popex_mp(pb,
             restart_point.nmod))
 
     # Generate 'model' folder
-    os.makedirs(Path(path_res, 'model', exist_ok=True))
+    os.makedirs(Path(path_res, 'model'), exist_ok=True)
 
     if path_q_cat is None:
         print('    > compute q_cat...', end='')
@@ -317,20 +317,17 @@ def get_q_cat(generate_m, get_hd_pri, n_prior, nmp):
     -------
     mCatProb : m-tuple of CatProb objects
     """
-    # core popex does not depend on joblib
-    # we release it as a minor revision, so we import here
-    # for major revision joblib to setup.py and import in the header
-    from joblib import Parallel, delayed
-
     # prepare the stage, wrapper for parallel execution
     hd_param_ind, hd_param_val = get_hd_pri()
 
     def wrap_generate_m(imod):
         return generate_m(hd_param_ind, hd_param_val, imod)
 
-    # computation of prior models in parallel
-    list_mCatParam = Parallel(n_jobs=nmp)(
-        delayed(wrap_generate_m)(imod) for imod in range(n_prior))
+    with multiprocessing.Pool(nmp) as pool:
+        list_mCatParam = pool.starmap(
+            generate_m,
+            [(hd_param_ind, hd_param_val, i) for i in range(n_prior)]
+        )
 
     # convert to CatProb and return m-tuple
     mCatProb = utl.list_mCatParam_to_mCatProb(list_mCatParam)
