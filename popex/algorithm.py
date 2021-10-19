@@ -76,6 +76,7 @@ def run_popex_mp(pb,
                  upd_ls_freq=-1,
                  si_freq=-1,
                  restart_point=None,
+                 n_prior=1000
                  ):
     """ `run_popex_mp` is the main implementation of the PoPEx algorithm.
 
@@ -104,9 +105,10 @@ def run_popex_mp(pb,
         Defines the problem functions and parameters
     path_res : str
         Path to the 'results' folder
-    path_q_cat : str
+    path_q_cat : str or None
         Path to the prior probability maps `q_cat` such that the tuple of
         `nmtype` objects can be loaded under '<path_q_cat>q_cat.prob'
+        If None, q_cat is computed by algorithm and save to path_res/q_cat.prob
     ncmax : m-tuple
         Maximal number of conditioning points for each model type
     nmp : int
@@ -124,6 +126,9 @@ def run_popex_mp(pb,
     restart_point : PoPEx
         If specified, restarts algorithm using the given PoPEx object
         and continues sampling
+    n_prior : int
+        Used if path_q_cat set to None. Number of realizations generated
+        to form the new q_cat map
 
 
     Returns
@@ -153,10 +158,17 @@ def run_popex_mp(pb,
     # Generate 'model' folder
     os.makedirs(Path(path_res, 'model', exist_ok=True))
 
+    if path_q_cat is None:
+        print('    > compute q_cat...', end='')
+        q_cat = get_q_cat(pb.generate_m, pb.get_hd_pri, n_prior, nmp)
+        with open(Path(path_res, 'q_cat.prob'), 'wb') as file:
+            pickle.dump(q_cat, file)
+    else:
+        print('    > load q_cat...', end='')
+        with open(Path(path_q_cat, 'q_cat.prob'), 'rb') as file:
+            q_cat = pickle.load(file)
+
     # The map 'q_cat' must be a nmtype-tuple of 'CatProb' or 'None' objects
-    print('    > load q_cat...', end='')
-    with open(Path(path_q_cat, 'q_cat.prob'), 'rb') as file:
-        q_cat = pickle.load(file)
     for imtype in cond_mtype:
         if not isinstance(q_cat[imtype], CatProb):
             raise TypeError(imtype, type(q_cat[imtype]))
@@ -284,8 +296,7 @@ def run_popex_mp(pb,
     print("\n  END 'RUN_POPEX_MP'\n")
 
 
-    
-def get_q_cat(generate_m, get_hd_pri, n_prior, nmp=1):
+def get_q_cat(generate_m, get_hd_pri, n_prior, nmp):
     """ `get_q_cat` samples from prior using functions
     specified in Problem and returns a CatProb object
     required in PoPEx procedure
@@ -310,18 +321,21 @@ def get_q_cat(generate_m, get_hd_pri, n_prior, nmp=1):
     # we release it as a minor revision, so we import here
     # for major revision joblib to setup.py and import in the header
     from joblib import Parallel, delayed
-    
+
     # prepare the stage, wrapper for parallel execution
     hd_param_ind, hd_param_val = get_hd_pri()
+
     def wrap_generate_m(imod):
         return generate_m(hd_param_ind, hd_param_val, imod)
-    
+
     # computation of prior models in parallel
-    list_mCatParam = Parallel(n_jobs=nmp)(delayed(wrap_generate_m)(imod) for imod in range(n_prior))
-                                                       
-    #convert to CatProb and return m-tuple
+    list_mCatParam = Parallel(n_jobs=nmp)(
+        delayed(wrap_generate_m)(imod) for imod in range(n_prior))
+
+    # convert to CatProb and return m-tuple
     mCatProb = utl.list_mCatParam_to_mCatProb(list_mCatParam)
     return mCatProb
+
 
 def _run_process(pb, popex, imod,
                  hd_prior_param_ind, hd_prior_param_val,

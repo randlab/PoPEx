@@ -865,18 +865,19 @@ class CatMType(MType):
             Number of categories in `categories`
         """
         return len(self.categories)
-    
+
     def __eq__(self, other):
         """
         Checks for equality.
-        
+
         Returns
         -------
         boolean
             True if param_val and categories are equal
         """
-        
-        return np.array_equal(self.param_val, other.param_val) and self.categories == other.categories
+        values_equal = np.array_equal(self.param_val, other.param_val)
+        categories_equal = self.categories == other.categories
+        return values_equal and categories_equal
 
 
 class ContParam(MType):
