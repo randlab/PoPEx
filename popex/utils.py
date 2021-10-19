@@ -1017,15 +1017,10 @@ def write_hd_info(popex, imod, hd_param_ind, hd_param_val):
 
     # Make hd directory
     path_hd = Path(path_res, 'hd/')
-    try:
-        os.mkdir(path_hd)
-    except OSError as exc:
-        if exc.errno != errno.EEXIST:
-            raise
-        pass
+    os.makedirs(path_hd, exist_ok=True)
 
     # For each model, write the precise hard conditioning
-    with open('{}hd_mod{:06}.txt'.format(path_hd, imod), 'w+') as file:
+    with open(Path(path_hd,'hd_mod{:06}.txt'.format(imod)), 'w+') as file:
         for imtype in range(nmtype):
             file.write('mtype {:02}\n'.format(imtype) + '-'*8 + '\n')
             if hd_param_ind[imtype] is not None:
