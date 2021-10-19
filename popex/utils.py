@@ -54,7 +54,7 @@ from popex.popex_objects import PoPEx, CatMType, ContParam, CatProb
 from popex.cnsts import NP_MIN_TOL
 
 def check_category(list_values, category):
-    """ `check category` verifies for each value if it falls in category
+    """ `check_category` verifies for each value if it falls in category
     
     Parameters
     ----------
@@ -71,13 +71,13 @@ def check_category(list_values, category):
         defined by the 2-tuples (cf. `popex_objects.CatMType`)
     
     """
-    belong_to_internal_list = [check_interval(list_values, c)
+    belong_to_internal_list = [check_interval(np.array(list_values), c)
                                for c in category]
     return np.sum(belong_to_internal_list, axis=0) > 0
 
     
 def check_interval(list_values, interval):
-    """ `check category` verifies for each value if it falls in interval
+    """ `check_interval` verifies for each value if it falls in interval
     
     Parameters
     ----------
@@ -95,6 +95,41 @@ def check_interval(list_values, interval):
     # a better error handling would be desirable
     assert interval[0] < interval[1]
     return (list_values < interval[1]) * (list_values > interval[0])
+
+def list_mCatParam_to_mCatProb(list_mCatParam):
+    """ `list_mCatParam_to_mCatProb` converts a list of m-tuples,
+    each m-tuple containing CatParam, to a m-tuple of CatProb
+    
+    Parameters
+    ----------
+    list_mCatParam : list
+        list of m-tuples of CatParam objects
+        
+    Returns
+    -------
+    m-tuple
+        each element is a CatProb instance
+    
+    """
+    catProb_list = []
+    # first we fix the tuple index m
+    # for each tuple element
+    for m, catParam in enumerate(list_mCatParam[0]):
+        # then we fix the category
+        list_by_categories = []
+        for category in catParam.categories:
+            # aggregate over all elements in the list
+            category_prob = np.mean(check_category([mCatParam[m].param_val
+                                   for mCatParam in list_mCatParam], category ), axis=0)
+            list_by_categories.append(category_prob)
+        
+        #get the CatProb which is m-th element in the tuple
+        catProb = CatProb(param_val=np.array(list_by_categories).transpose(), categories=catParam.categories)
+        catProb_list.append(catProb)
+        
+    # we appended CatProbs to a list, but we need to return a tuple
+    return tuple(catProb_list)
+
 
 # Category probabilities and kld maps
 def compute_cat_prob(popex, weights, start=-1, stop=-1):
