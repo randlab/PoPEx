@@ -165,6 +165,8 @@ def run_popex_mp(pb,
             pickle.dump(q_cat, file)
     else:
         print('    > load q_cat...', end='')
+        # The q_cat will be loaded, n_prior from input has no meaning now
+        n_prior = 0
         with open(Path(path_q_cat, 'q_cat.prob'), 'rb') as file:
             q_cat = pickle.load(file)
 
@@ -173,6 +175,7 @@ def run_popex_mp(pb,
         if not isinstance(q_cat[imtype], CatProb):
             raise TypeError(imtype, type(q_cat[imtype]))
     print('done')
+    t_prior = time.time() - tst_run
 
     # The kld map is zero initially (no conditioning data is selected)
     p_cat = deepcopy(q_cat)
@@ -219,10 +222,10 @@ def run_popex_mp(pb,
 
                 # Write some information
                 t_run = time.time() - tst_run
-                t_mod = t_run / popex.nmod
+                t_mod = (t_run - t_prior) / popex.nmod
                 utl.write_run_info(pb, popex, imod, log_p_lik, cmp_log_p_lik,
                                    log_p_pri, log_p_gen, ncmod)
-                _write_run_sum(pb, popex, nmax, t_run, t_mod)
+                _write_run_sum(pb, popex, nmax, t_run, t_mod, t_prior, n_prior)
 
                 # Update 'kld' and 'p_cat' (if required)
                 if len(cond_mtype) > 0:
@@ -319,9 +322,6 @@ def get_q_cat(generate_m, get_hd_pri, n_prior, nmp):
     """
     # prepare the stage, wrapper for parallel execution
     hd_param_ind, hd_param_val = get_hd_pri()
-
-    def wrap_generate_m(imod):
-        return generate_m(hd_param_ind, hd_param_val, imod)
 
     with multiprocessing.Pool(nmp) as pool:
         list_mCatParam = pool.starmap(
@@ -479,12 +479,12 @@ def _read_iteration(restart_point, imod):
     return imod, model, ncmod, log_p_lik, cmp_log_p_lik, log_p_pri, log_p_gen
 
 
-def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
-    """ `_write_run_sum` writes a document that summarized the overall
+def _write_run_sum(pb, popex, nmax, t_popex, t_mod, t_prior, n_prior):
+    """ `_write_run_sum` writes a document that summarizes the overall
     progress of the popex run at 'popex.path_res'.
 
 
-    The file structure is as followes:
+    The file structure is as follows:
         | <popex.path_res>$
         |    └- run_progress.txt
 
@@ -501,6 +501,11 @@ def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
         Total time elapsed
     t_mod : float
         Average time per model
+    t_prior : float
+        Time taken to generate prior realizations for q_cat
+    n_prior: int
+        Number of prior realizations generated for q_cat
+        If equals 0, q_cat_prob was read from file
 
 
     Returns
@@ -529,13 +534,15 @@ def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
     progress = popex.nmod / nmax
     m_popex, s_popex = divmod(t_popex, 60)
     h_popex, m_popex = divmod(m_popex, 60)
+    m_prior, s_prior = divmod(t_prior, 60)
+    h_prior, m_prior = divmod(m_prior, 60)
     m_mod, s_mod = divmod(t_mod, 60)
     h_mod, m_mod = divmod(m_mod, 60)
-    t_est = t_popex / progress
+    t_est = (t_popex - t_prior) / progress
     m_est, s_est = divmod(t_est, 60)
     h_est, m_est = divmod(m_est, 60)
 
-    # Write into a file 'iteration_info.txt'
+    # Write into a file
     with open(Path(path_res, 'run_progress.txt'), 'w+') as file:
         # Start with empty line
         file.write('\n')
@@ -568,12 +575,15 @@ def _write_run_sum(pb, popex, nmax, t_popex, t_mod):
         file.write('  Computed or Predicted\n')
         file.write('    n_cmp       = {:7d}\n'.format(n_comp))
         file.write('    n_prd       = {:7d}\n'.format(n_pred))
+        file.write('    n_prior     = {:7d}\n'.format(n_prior))
         file.write('\n')
 
         # Write times
         file.write('  Time\n')
         file.write('    T_el        = {:4.0f}[h] {:2.0f}[m] {:5.2f}[s]\n'
                    .format(h_popex, m_popex, s_popex))
+        file.write('    T_prior     = {:4.0f}[h] {:2.0f}[m] {:5.2f}[s]\n'
+                   .format(h_prior, m_prior, s_prior))
         file.write('    T / mod     = {:4.0f}[h] {:2.0f}[m] {:5.2f}[s]\n'
                    .format(h_mod, m_mod, s_mod))
         file.write('    T_tot       = {:4.0f}[h] {:2.0f}[m] {:5.2f}[s]\n'

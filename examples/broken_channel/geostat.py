@@ -13,7 +13,7 @@ class DeesseSimulator():
         self.sz = 1.
         self.nv = 1
         self.varname = "facies"
-        self.TI = geone.img.readImageGslib('data/strebelle.gslib')
+        self.TI = geone.img.readImageGslib('../ti/strebelle.gslib')
 
     def run(self, seed, dataImage=None):
         deesse_input = geone.deesseinterface.DeesseInput(nx=self.nx, ny=self.ny, nz=self.nz,
