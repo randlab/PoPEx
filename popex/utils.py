@@ -40,7 +40,6 @@ Generic functions
 
 # General imports
 import os
-import errno
 import warnings
 import numpy as np
 import pickle
@@ -1020,7 +1019,7 @@ def write_hd_info(popex, imod, hd_param_ind, hd_param_val):
     os.makedirs(path_hd, exist_ok=True)
 
     # For each model, write the precise hard conditioning
-    with open(Path(path_hd,'hd_mod{:06}.txt'.format(imod)), 'w+') as file:
+    with open(Path(path_hd, 'hd_mod{:06}.txt'.format(imod)), 'w+') as file:
         for imtype in range(nmtype):
             file.write('mtype {:02}\n'.format(imtype) + '-'*8 + '\n')
             if hd_param_ind[imtype] is not None:
