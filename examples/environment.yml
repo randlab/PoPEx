@@ -11,7 +11,7 @@ dependencies:
     - numpy
     - git+git://github.com/randlab/geone@bd67d3f#egg=geone
     - pyvista
-    - popex=1.4.0
+    - popex==1.4.0
     - flopy
     - joblib
     - pandas
