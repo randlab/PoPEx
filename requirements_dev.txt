@@ -18,7 +18,7 @@ jeepney==0.4.3
 joblib==1.1.0
 keyring==21.2.0
 mccabe==0.6.1
-numpy==1.21.2
+numpy==1.22.0
 packaging==21.0
 pkginfo==1.5.0.1
 pluggy==1.0.0
